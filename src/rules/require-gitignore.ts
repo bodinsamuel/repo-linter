@@ -1,4 +1,4 @@
-import type { RuleInterface } from '../Rule';
+import type { RuleInterface } from '../rule';
 
 type Messages = 'presence';
 
@@ -6,6 +6,7 @@ const FILENAME = '.gitignore';
 
 export const rule: RuleInterface<Messages> = {
   name: 'base/require-gitignore',
+
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
     url: 'https://github.com/algolia/repo-linter',
@@ -14,10 +15,11 @@ export const rule: RuleInterface<Messages> = {
   messages: {
     presence: `Expected file "${FILENAME}" to exists.`,
   },
-  async exec(fs) {
+
+  async exec({ fs, report }) {
     const exists = await fs.fileExists(FILENAME);
     if (!exists) {
-      this.report('presence');
+      report('presence');
     }
   },
 };

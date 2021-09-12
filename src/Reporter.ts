@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 import chalk from 'chalk';
 
-import type { RuleInterface } from './Rule';
+import type { RuleWrapper } from './rule';
 
 export class Reporter {
-  #messages: Array<{ rule: RuleInterface<any> }> = [];
+  #messages: Array<{ rule: RuleWrapper<any> }> = [];
 
-  add(rule: RuleInterface<any>): void {
+  add(rule: RuleWrapper<any>): void {
     this.#messages.push({ rule });
   }
 
@@ -18,13 +18,16 @@ export class Reporter {
 
     for (const msg of this.#messages) {
       const name = msg.rule.getName();
-      const rep = msg.rule.getReport()!;
+      const reps = msg.rule.getReport();
       const sev = msg.rule.getSeverity();
+      console.log(reps);
 
-      if (sev === 'error') {
-        console.log(chalk.red('error'), chalk.white(rep.message));
-      } else if (sev === 'warn') {
-        console.log(chalk.yellow('warn'), chalk.white(rep.message));
+      for (const rep of reps) {
+        if (sev === 'error') {
+          console.log(chalk.red('error'), chalk.white(rep.message));
+        } else if (sev === 'warn') {
+          console.log(chalk.yellow('warn'), chalk.white(rep.message));
+        }
       }
 
       console.log(`       ${chalk.gray(name)}`);

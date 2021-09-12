@@ -2,12 +2,13 @@
 import path from 'path';
 
 import type { Reporter } from './Reporter';
-import type { RuleConstructor, Schema } from './Rule';
 import type { FS } from './fs';
+import type { RuleInterface, Options } from './rule';
+import { RuleWrapper, validateRule } from './rule';
 
 export interface Config {
   plugins?: string[];
-  rules?: Record<string, Schema>;
+  rules?: Record<string, Options>;
   extends?: string[];
 }
 
@@ -16,7 +17,7 @@ export class Runner {
 
   #rc?: string | void;
   #config?: Config;
-  #registry = new Map<string, RuleConstructor<any>>();
+  #registry = new Map<string, RuleInterface<any>>();
   #reporter: Reporter;
   #fs: FS;
 
@@ -62,24 +63,19 @@ export class Runner {
   }
 
   register(filePath: string): void {
-    const TmpRule: RuleConstructor<any> = require(filePath).default;
-
-    const tmp = new TmpRule(['error']);
-    for (const name of ['getName', 'getMeta', 'exec']) {
-      if (!(name in tmp)) {
-        throw new Error(`Invalid rule in "${filePath}", missing "${name}"`);
-      }
+    const rule = require(filePath).rule;
+    if (!validateRule(rule)) {
+      return;
     }
 
-    const name = tmp.getName();
-    if (this.#registry.has(name)) {
-      throw new Error(`Rule "${name}" already defined`);
+    if (this.#registry.has(rule.name)) {
+      throw new Error(`Rule "${rule.name}" already defined`);
     }
 
-    this.#registry.set(name, TmpRule);
+    this.#registry.set(rule.name, rule);
   }
 
-  async exec(fs): Promise<void> {
+  async exec(): Promise<void> {
     if (
       !this.#config ||
       !this.#config.rules ||
@@ -95,8 +91,9 @@ export class Runner {
           `No rule exists with name "${name}". (rules: ${JSON.stringify(list)})`
         );
       }
-      const RuleClass = this.#registry.get(name)!;
-      const rule = new RuleClass(options);
+
+      const def = this.#registry.get(name)!;
+      const rule = new RuleWrapper(def, options);
       rule.validate();
       await rule.exec(this.#fs);
 

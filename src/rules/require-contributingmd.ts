@@ -1,4 +1,4 @@
-import type { Meta, RuleInterface } from '../Rule';
+import type { RuleInterface } from '../rule';
 
 type Messages = 'presence';
 type Schema = { extension: string };
@@ -7,6 +7,7 @@ const FILENAME = 'CONTRIBUTING.md';
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-contributingmd',
+
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
     url: 'https://github.com/algolia/repo-linter',
@@ -15,10 +16,11 @@ export const rule: RuleInterface<Messages, Schema> = {
   messages: {
     presence: `Expected file "${FILENAME}" to exists.`,
   },
-  async exec(fs) {
+
+  async exec({ fs, report }) {
     const exists = await fs.fileExists(FILENAME);
     if (!exists) {
-      this.report('presence');
+      report('presence');
     }
   },
 };

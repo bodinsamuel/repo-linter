@@ -5,6 +5,7 @@
     "algolia/typescript"
   ],
   "rules": {
+    "no-continue": "off",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
