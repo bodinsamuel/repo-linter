@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "algolia",
+    "algolia/jest",
+    "algolia/typescript"
+  ],
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowTypedFunctionExpressions": true
+      }
+    ]
+  }
+}
