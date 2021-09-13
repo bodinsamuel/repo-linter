@@ -1,6 +1,6 @@
 export const rulesets = {
   recommended: {
-    'base/require-changelog': ['error'],
+    'base/require-changelog': ['error', { extension: 'md' }],
     'base/require-contributingmd': ['error'],
     'base/require-dockerfile': ['error'],
     'base/require-dockerignore': ['error'],
@@ -8,7 +8,7 @@ export const rulesets = {
     'base/require-eslintignore': ['error'],
     'base/require-eslintrc': ['error'],
     'base/require-gitignore': ['error'],
-    'base/require-license': ['error', { extension: 'txt' }],
+    'base/require-license': ['error', { extension: '' }],
     'base/require-nvmrc': ['error'],
     'base/require-packagejson': ['error'],
     'base/require-prettierrc': ['error'],

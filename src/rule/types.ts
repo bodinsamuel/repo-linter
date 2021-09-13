@@ -6,7 +6,22 @@ export type Severity = 'error' | 'off' | 'warn';
 
 export type Options<TSchema = never> = [Severity, TSchema] | [Severity];
 
-export type Reported = { message: string };
+export type Reported<TMessage extends string> = {
+  name: TMessage;
+  message: string;
+  data?: any;
+};
+
+export type Fixer = () => Promise<void> | void;
+
+export type ExecParams<TMessage extends string, TSchema = never> = {
+  fs: FS;
+  report: (name: TMessage, data?: any) => void;
+  getReport: () => Array<Reported<TMessage>>;
+  options: TSchema;
+  severity: Severity;
+};
+export type ExecReturn = Fixer | void;
 
 export interface RuleInterface<TMessage extends string, TSchema = never> {
   name: string;
@@ -14,13 +29,10 @@ export interface RuleInterface<TMessage extends string, TSchema = never> {
     description: string;
     url: string;
   };
-  messages: Record<TMessage, string>;
+  messages: Record<TMessage, string | ((data?: any) => string)>;
   schema?: JSONSchemaType<TSchema>;
 
-  exec: (opts: {
-    fs: FS;
-    report: (name: TMessage) => void;
-    options: TSchema;
-    severity: Severity;
-  }) => Promise<void>;
+  exec: (
+    opts: ExecParams<TMessage, TSchema>
+  ) => ExecReturn | Promise<ExecReturn>;
 }

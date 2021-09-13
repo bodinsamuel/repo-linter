@@ -9,7 +9,8 @@
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
-        "allowTypedFunctionExpressions": true
+        "allowTypedFunctionExpressions": true,
+        "allowHigherOrderFunctions": true
       }
     ]
   }

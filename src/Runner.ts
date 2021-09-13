@@ -20,11 +20,18 @@ export class Runner {
   #registry = new Map<string, RuleInterface<any>>();
   #reporter: Reporter;
   #fs: FS;
+  #fix: boolean;
 
-  constructor(opts: { filePath: string; reporter: Reporter; fs: FS }) {
+  constructor(opts: {
+    filePath: string;
+    reporter: Reporter;
+    fs: FS;
+    fix: boolean;
+  }) {
     this.filePath = opts.filePath;
     this.#reporter = opts.reporter;
     this.#fs = opts.fs;
+    this.#fix = opts.fix;
   }
 
   async run(): Promise<void> {
@@ -95,7 +102,7 @@ export class Runner {
       const def = this.#registry.get(name)!;
       const rule = new RuleWrapper(def, options);
       rule.validate();
-      await rule.exec(this.#fs);
+      await rule.exec(this.#fs, this.#fix);
 
       if (rule.hasReport()) {
         this.#reporter.add(rule);

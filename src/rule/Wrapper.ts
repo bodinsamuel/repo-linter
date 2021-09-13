@@ -2,14 +2,20 @@ import Ajv from 'ajv';
 
 import type { FS } from '../fs';
 
-import type { RuleInterface, Reported, Severity, Options } from './types';
+import type {
+  RuleInterface,
+  Reported,
+  Severity,
+  Options,
+  ExecReturn,
+} from './types';
 
 const ajv = new Ajv();
 
 export class RuleWrapper<TMessage extends string, TSchema = never> {
   #rule: RuleInterface<TMessage>;
   #options: TSchema | undefined;
-  #reported: Reported[] = [];
+  #reported: Array<Reported<TMessage>> = [];
   #severity: Severity;
 
   constructor(rule: RuleInterface<TMessage>, options: Options<TSchema>) {
@@ -41,18 +47,26 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     }
   }
 
-  report(name: TMessage): void {
-    const message = this.#rule.messages[name];
-    this.#reported.push({ message });
+  report(name: TMessage, data?: any): void {
+    let message = this.#rule.messages[name];
+    if (typeof message === 'function') {
+      message = message(data);
+    }
+    this.#reported.push({ name, message, data });
   }
 
-  async exec(fs: FS): Promise<void> {
-    return await this.#rule.exec({
+  async exec(fs: FS, fix: boolean): Promise<ExecReturn | Promise<ExecReturn>> {
+    const fixer = await this.#rule.exec({
       fs,
-      report: (name) => this.report(name),
+      report: (name, data) => this.report(name, data),
+      getReport: () => this.getReport(),
       options: (this.#options || {}) as never,
       severity: this.#severity,
     });
+
+    if (fix && fixer) {
+      await fixer();
+    }
   }
 
   getName(): string {
@@ -63,7 +77,7 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     return this.#reported.length > 0;
   }
 
-  getReport(): Reported[] {
+  getReport(): Array<Reported<TMessage>> {
     return this.#reported;
   }
 

@@ -11,12 +11,16 @@ export class FS {
     this.#base = base;
   }
 
+  toAbsolute(file: string): string {
+    return path.isAbsolute(file) ? file : path.join(this.#base, file);
+  }
+  toBase(file: string): string {
+    return this.toAbsolute(file).replace(this.#base, '');
+  }
+
   async fileExists(file: string): Promise<boolean> {
     try {
-      await fs.access(
-        path.isAbsolute(file) ? file : path.join(this.#base, file),
-        constants.F_OK
-      );
+      await fs.access(this.toAbsolute(file), constants.F_OK);
       return true;
     } catch {
       return false;
@@ -25,18 +29,22 @@ export class FS {
 
   async fileLoad(file: string): Promise<string | void> {
     try {
-      return await fs.readFile(
-        path.isAbsolute(file) ? file : path.join(this.#base, file),
-        'utf-8'
-      );
+      return await fs.readFile(this.toAbsolute(file), 'utf-8');
     } catch {
       return undefined;
     }
   }
 
+  async fileWrite(file: string, content: string): Promise<void> {
+    return await fs.writeFile(this.toAbsolute(file), content);
+  }
+
+  async fileRename(file: string, name: string): Promise<void> {
+    return await fs.rename(file, name);
+  }
+
   async listFiles(dir: string): Promise<string[]> {
-    const rp = path.isAbsolute(dir) ? dir : path.join(this.#base, dir);
-    console.log('want', dir, rp);
+    const rp = this.toAbsolute(dir);
     if (cacheFileList.has(rp)) {
       return cacheFileList.get(rp)!;
     }

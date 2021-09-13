@@ -1,10 +1,10 @@
+import { checkFileNameWithExtension } from '../helpers';
 import type { RuleInterface } from '../rule';
 
 type Messages = 'extension' | 'presence';
 type Schema = { extension: string };
 
 const FILENAME = 'LICENSE';
-const REGEX = /^LICENSE/;
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-license',
@@ -15,8 +15,10 @@ export const rule: RuleInterface<Messages, Schema> = {
   },
 
   messages: {
-    presence: `Expected file "${FILENAME}" to exists.`,
-    extension: `Expected file "${FILENAME}" to have the correct extension.`,
+    presence: ({ preferredName }) =>
+      `Expected file "${preferredName}" to exists.`,
+    extension: ({ fileName }) =>
+      `Expected file "${fileName}" to have the correct extension.`,
   },
 
   schema: {
@@ -31,26 +33,13 @@ export const rule: RuleInterface<Messages, Schema> = {
     additionalProperties: false,
   },
 
-  async exec({ fs, report, options }) {
+  async exec({ fs, report, options, getReport }) {
     const allowedExt = options.extension;
-    const list = await fs.listFiles('./');
-    console.log('extension', allowedExt, list);
+    const preferredName = `${FILENAME}${allowedExt ? `.${allowedExt}` : ''}`;
 
-    let exists = false;
-    for (const file of list) {
-      if (!REGEX.test(file)) {
-        continue;
-      }
-
-      if (!file.endsWith(`.${allowedExt}`)) {
-        report('extension');
-        continue;
-      }
-      exists = true;
-    }
-
-    if (!exists) {
-      report('presence');
-    }
+    return await checkFileNameWithExtension(
+      { fs, report, getReport },
+      { allowedExt, preferredName }
+    );
   },
 };
