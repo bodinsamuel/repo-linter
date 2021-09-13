@@ -3,10 +3,10 @@ import type { RuleInterface } from '../rule';
 type Messages = 'presence';
 type Schema = { extension: string };
 
-const FILENAME = '.stylelintrc.json';
+const FILENAME = '.stylelintrc';
 
 export const rule: RuleInterface<Messages, Schema> = {
-  name: 'base/require-stylelintrcjson',
+  name: 'base/require-stylelintrc',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,

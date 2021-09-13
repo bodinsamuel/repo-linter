@@ -26,7 +26,7 @@ export const rule: RuleInterface<Messages, Schema> = {
     properties: {
       extension: {
         type: 'string',
-        enum: ['txt', ''],
+        enum: ['md', ''],
         nullable: true,
       },
     },

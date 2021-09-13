@@ -1,7 +1,7 @@
 export const rulesets = {
   recommended: {
     'base/require-changelog': ['error', { extension: 'md' }],
-    'base/require-contributingmd': ['error'],
+    'base/require-contributing': ['error', { extension: 'md' }],
     'base/require-dockerfile': ['error'],
     'base/require-dockerignore': ['error'],
     'base/require-envexample': ['error'],
@@ -13,9 +13,9 @@ export const rulesets = {
     'base/require-packagejson': ['error'],
     'base/require-prettierrc': ['error'],
     'base/require-prettierignore': ['error'],
-    'base/require-readmemd': ['error'],
-    'base/require-releaseconfigjs': ['error'],
-    'base/require-stylelintrcjson': ['error'],
+    'base/require-readme': ['error', { extension: 'md' }],
+    'base/require-semanticrelease': ['error'],
+    'base/require-stylelintrc': ['error'],
     'base/require-renovate': ['error'],
     'base/require-tsconfigjson': ['error'],
   },

@@ -4,10 +4,10 @@ import type { RuleInterface } from '../rule';
 type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
-const FILENAME = 'CONTRIBUTING.md';
+const FILENAME = 'CONTRIBUTING';
 
 export const rule: RuleInterface<Messages, Schema> = {
-  name: 'base/require-contributingmd',
+  name: 'base/require-contributing',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
@@ -26,7 +26,7 @@ export const rule: RuleInterface<Messages, Schema> = {
     properties: {
       extension: {
         type: 'string',
-        enum: ['txt', ''],
+        enum: ['md', ''],
         nullable: true,
       },
     },
