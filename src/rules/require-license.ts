@@ -2,7 +2,7 @@ import { checkFileNameWithExtension } from '../helpers';
 import type { RuleInterface } from '../rule';
 
 type Messages = 'extension' | 'presence';
-type Schema = { extension: string };
+type Schema = { extension?: string };
 
 const FILENAME = 'LICENSE';
 
@@ -27,14 +27,15 @@ export const rule: RuleInterface<Messages, Schema> = {
       extension: {
         type: 'string',
         enum: ['txt', ''],
+        nullable: true,
       },
     },
-    required: ['extension'],
+    required: [],
     additionalProperties: false,
   },
 
   async exec({ fs, report, options, getReport }) {
-    const allowedExt = options.extension;
+    const allowedExt = options.extension || '';
     const preferredName = `${FILENAME}${allowedExt ? `.${allowedExt}` : ''}`;
 
     return await checkFileNameWithExtension(

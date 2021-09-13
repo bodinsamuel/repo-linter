@@ -39,7 +39,7 @@ export async function checkFileNameWithExtension(
     if (reported.length === 1) {
       // If it matched no other file we just create it
       return async (): Promise<void> => {
-        await params.fs.fileWrite(`./${preferredName}`, 'MIT License');
+        await params.fs.fileWrite(`./${preferredName}`, 'TODO getContent');
       };
     }
   }

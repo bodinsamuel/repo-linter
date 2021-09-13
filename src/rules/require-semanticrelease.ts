@@ -6,7 +6,7 @@ type Schema = { extension: string };
 const FILENAME = 'release.config.js';
 
 export const rule: RuleInterface<Messages, Schema> = {
-  name: 'base/require-releaseconfigjs',
+  name: 'base/require-semanticrelease',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
