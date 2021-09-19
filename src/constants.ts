@@ -1,1 +1,1 @@
-export const FILENAME = '.repolinter.json';
+export const FILENAME = '.repolinterrc.json';

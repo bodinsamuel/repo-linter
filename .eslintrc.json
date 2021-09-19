@@ -6,6 +6,7 @@
   ],
   "rules": {
     "no-continue": "off",
+    "consistent-return": "off",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {

@@ -1,6 +1,5 @@
 import type { ExecParams, ExecReturn } from '../rule';
 
-// eslint-disable-next-line consistent-return
 export async function checkFileNameWithExtension(
   params: Pick<
     ExecParams<'extension' | 'presence', any>,
@@ -24,23 +23,25 @@ export async function checkFileNameWithExtension(
     exists = true;
   }
 
-  if (!exists) {
-    const reported = params.getReport();
+  if (exists) {
+    return;
+  }
 
-    // If it does not exists but one file matched, we just change the extension
-    if (reported.length === 1) {
-      return async (): Promise<void> => {
-        await params.fs.fileRename(reported[0].data.fileName, fullName);
-      };
-    }
+  const reported = params.getReport();
 
-    params.report('presence', { fullName });
+  // If it does not exists but one file matched, we just change the extension
+  if (reported.length === 1) {
+    return async (): Promise<void> => {
+      await params.fs.fileRename(reported[0].data.fileName, fullName);
+    };
+  }
 
-    if (reported.length === 1) {
-      // If it matched no other file we just create it
-      return async (): Promise<void> => {
-        await params.fs.fileWrite(`./${fullName}`, 'TODO getContent');
-      };
-    }
+  params.report('presence', { fullName });
+
+  if (reported.length === 1) {
+    // If it matched no other file we just create it
+    return async (): Promise<void> => {
+      await params.fs.fileWrite(`./${fullName}`, 'TODO getContent');
+    };
   }
 }
