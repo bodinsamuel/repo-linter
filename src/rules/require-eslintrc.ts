@@ -5,13 +5,17 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.eslintrc';
-const CONTENT = JSON.stringify({
-  extends: ['algolia', 'algolia/jest', 'algolia/typescript'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['jest'],
-  rules: {},
-  overrides: [],
-});
+const CONTENT = JSON.stringify(
+  {
+    extends: ['algolia', 'algolia/jest', 'algolia/typescript'],
+    parser: '@typescript-eslint/parser',
+    plugins: ['jest'],
+    rules: {},
+    overrides: [],
+  },
+  null,
+  2
+);
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-eslintrc',

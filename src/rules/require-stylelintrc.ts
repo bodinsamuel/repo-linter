@@ -5,9 +5,13 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.stylelintrc';
-const CONTENT = JSON.stringify({
-  extends: ['stylelint-config-recommended', 'stylelint-config-standard'],
-});
+const CONTENT = JSON.stringify(
+  {
+    extends: ['stylelint-config-recommended', 'stylelint-config-standard'],
+  },
+  null,
+  2
+);
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-stylelintrc',

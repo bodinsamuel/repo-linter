@@ -5,9 +5,13 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.renovaterc';
-const CONTENT = JSON.stringify({
-  extends: ['config:js-app', 'algolia'],
-});
+const CONTENT = JSON.stringify(
+  {
+    extends: ['config:js-app', 'algolia'],
+  },
+  null,
+  2
+);
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-renovaterc',

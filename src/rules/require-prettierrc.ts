@@ -5,13 +5,17 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.prettierrc';
-const CONTENT = JSON.stringify({
-  trailingComma: 'es5',
-  tabWidth: 2,
-  semi: true,
-  singleQuote: true,
-  printWidth: 80,
-});
+const CONTENT = JSON.stringify(
+  {
+    trailingComma: 'es5',
+    tabWidth: 2,
+    semi: true,
+    singleQuote: true,
+    printWidth: 80,
+  },
+  null,
+  2
+);
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-prettierrc',

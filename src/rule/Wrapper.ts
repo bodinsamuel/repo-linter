@@ -66,6 +66,18 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
 
     if (fix && fixer) {
       await fixer();
+
+      // Clear everything
+      this.#reported.splice(0);
+
+      // Try again if there is no error anymore it's fine, otherwise it will report the second error
+      await this.#rule.exec({
+        fs,
+        report: (name, data) => this.report(name, data),
+        getReport: () => this.getReport(),
+        options: (this.#options || {}) as never,
+        severity: this.#severity,
+      });
     }
   }
 

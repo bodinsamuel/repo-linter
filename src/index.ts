@@ -8,6 +8,18 @@ import { FILENAME } from './constants';
 import { FS } from './fs';
 
 const argv = yargs.usage('Lint a repository').options({
+  config: {
+    description: 'Path of the ".repolinterrc.json',
+    requiresArg: false,
+    demandOption: false,
+    string: true,
+  },
+  folder: {
+    description: 'Path of the repository to fix',
+    requiresArg: false,
+    demandOption: false,
+    string: true,
+  },
   fix: {
     description: 'Automatically fix problems',
     requiresArg: false,
@@ -18,9 +30,9 @@ const argv = yargs.usage('Lint a repository').options({
 
 (async (): Promise<void> => {
   const runner = new Runner({
-    filePath: path.join(__dirname, '..', FILENAME),
+    filePath: argv.config ? argv.config : path.join(__dirname, '..', FILENAME),
     reporter: new Reporter(),
-    fs: new FS(path.join(__dirname, '..')),
+    fs: new FS(argv.folder ? argv.folder : path.join(__dirname, '..')),
     fix: argv.fix === true,
   });
   await runner.run();

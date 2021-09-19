@@ -2,8 +2,6 @@ import { constants } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-const cacheFileList = new Map<string, string[]>();
-
 export class FS {
   #base;
 
@@ -14,6 +12,7 @@ export class FS {
   toAbsolute(file: string): string {
     return path.isAbsolute(file) ? file : path.join(this.#base, file);
   }
+
   toBase(file: string): string {
     return this.toAbsolute(file).replace(this.#base, '');
   }
@@ -40,17 +39,13 @@ export class FS {
   }
 
   async fileRename(file: string, name: string): Promise<void> {
-    return await fs.rename(file, name);
+    return await fs.rename(this.toAbsolute(file), name);
   }
 
   async listFiles(dir: string): Promise<string[]> {
     const rp = this.toAbsolute(dir);
-    if (cacheFileList.has(rp)) {
-      return cacheFileList.get(rp)!;
-    }
 
     const list = await fs.readdir(rp);
-    cacheFileList.set(rp, list);
     return list;
   }
 }
