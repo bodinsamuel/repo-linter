@@ -16,8 +16,8 @@ export const rule: RuleInterface<Messages, Schema> = {
 
   messages: {
     presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
-    extension: ({ fileName }) =>
-      `Expected file "${fileName}" to have the correct extension.`,
+    extension: ({ fileName, extension }) =>
+      `Expected file "${fileName}" to have the correct extension (${extension}).`,
   },
 
   schema: {

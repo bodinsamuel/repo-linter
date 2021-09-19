@@ -1,3 +1,4 @@
+import { checkFilePresence } from '../helpers';
 import type { RuleInterface } from '../rule';
 
 type Messages = 'presence';
@@ -17,9 +18,9 @@ export const rule: RuleInterface<Messages> = {
   },
 
   async exec({ fs, report }) {
-    const exists = await fs.fileExists(FILENAME);
-    if (!exists) {
-      report('presence');
-    }
+    return await checkFilePresence(
+      { fs, report },
+      { baseName: FILENAME, getContent: () => '' }
+    );
   },
 };

@@ -5,7 +5,11 @@ export async function checkFileNameWithExtension(
     ExecParams<'extension' | 'presence', any>,
     'fs' | 'getReport' | 'report'
   >,
-  { extension, baseName }: { extension: string; baseName: string }
+  {
+    extension,
+    baseName,
+    getContent,
+  }: { extension: string; baseName: string; getContent?: () => string }
 ): Promise<ExecReturn> {
   const list = await params.fs.listFiles('./');
   const fullName = `${baseName}${extension ? `.${extension}` : ''}`;
@@ -16,8 +20,8 @@ export async function checkFileNameWithExtension(
       continue;
     }
 
-    if (!file.endsWith(`.${extension}`)) {
-      params.report('extension', { fileName: file });
+    if (extension && !file.endsWith(`.${extension}`)) {
+      params.report('extension', { fileName: file, extension });
       continue;
     }
     exists = true;
@@ -38,10 +42,10 @@ export async function checkFileNameWithExtension(
 
   params.report('presence', { fullName });
 
-  if (reported.length === 1) {
+  if (reported.length === 1 && getContent) {
     // If it matched no other file we just create it
     return async (): Promise<void> => {
-      await params.fs.fileWrite(`./${fullName}`, 'TODO getContent');
+      await params.fs.fileWrite(`./${fullName}`, getContent());
     };
   }
 }

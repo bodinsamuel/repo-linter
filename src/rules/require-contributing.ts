@@ -5,6 +5,23 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = 'CONTRIBUTING';
+const CONTENT = `# Contributing
+
+## Dev Setup
+
+\`\`\`sh
+# install
+
+# build
+
+# test
+
+# lint
+\`\`\`
+
+## Releasing
+\`\`\`sh
+\`\`\``;
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-contributing',
@@ -16,8 +33,8 @@ export const rule: RuleInterface<Messages, Schema> = {
 
   messages: {
     presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
-    extension: ({ fileName }) =>
-      `Expected file "${fileName}" to have the correct extension.`,
+    extension: ({ fileName, extension }) =>
+      `Expected file "${fileName}" to have the correct extension (${extension}).`,
   },
 
   schema: {
@@ -38,7 +55,7 @@ export const rule: RuleInterface<Messages, Schema> = {
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { extension, baseName: FILENAME }
+      { extension, baseName: FILENAME, getContent: () => CONTENT }
     );
   },
 };
