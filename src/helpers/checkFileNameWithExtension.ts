@@ -9,7 +9,7 @@ export async function checkFileNameWithExtension(
     extension,
     baseName,
     getContent,
-  }: { extension: string; baseName: string; getContent?: () => string }
+  }: { extension: string; baseName: string; getContent: () => string }
 ): Promise<ExecReturn> {
   const list = await params.fs.listFiles('./');
   const fullName = `${baseName}${extension ? `.${extension}` : ''}`;

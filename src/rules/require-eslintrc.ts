@@ -5,6 +5,13 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.eslintrc';
+const CONTENT = JSON.stringify({
+  extends: ['algolia', 'algolia/jest', 'algolia/typescript'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['jest'],
+  rules: {},
+  overrides: [],
+});
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-eslintrc',
@@ -38,7 +45,7 @@ export const rule: RuleInterface<Messages, Schema> = {
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { extension, baseName: FILENAME }
+      { extension, baseName: FILENAME, getContent: () => CONTENT }
     );
   },
 };

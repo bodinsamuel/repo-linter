@@ -1,3 +1,4 @@
+import { exec } from '../helpers';
 import type { RuleInterface } from '../rule';
 
 type Messages = 'presence';
@@ -18,8 +19,13 @@ export const rule: RuleInterface<Messages> = {
 
   async exec({ fs, report }) {
     const exists = await fs.fileExists(FILENAME);
-    if (!exists) {
-      report('presence');
+    if (exists) {
+      return;
     }
+
+    report('presence');
+    return async (): Promise<void> => {
+      await exec('yarn tsc --init');
+    };
   },
 };

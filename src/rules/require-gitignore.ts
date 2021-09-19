@@ -1,8 +1,28 @@
+import { checkFilePresence } from '../helpers';
 import type { RuleInterface } from '../rule';
 
 type Messages = 'presence';
 
 const FILENAME = '.gitignore';
+const CONTENT = `
+logs
+*.log
+coverage
+*.lcov
+node_modules/
+jspm_packages/
+*.tsbuildinfo
+.npm
+.eslintcache
+.cache
+.env
+.env.test
+.next
+.nuxt
+
+dist
+.vuepress/dist
+`;
 
 export const rule: RuleInterface<Messages> = {
   name: 'base/require-gitignore',
@@ -17,9 +37,9 @@ export const rule: RuleInterface<Messages> = {
   },
 
   async exec({ fs, report }) {
-    const exists = await fs.fileExists(FILENAME);
-    if (!exists) {
-      report('presence');
-    }
+    return await checkFilePresence(
+      { fs, report },
+      { baseName: FILENAME, getContent: () => CONTENT }
+    );
   },
 };

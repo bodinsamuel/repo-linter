@@ -5,6 +5,13 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = 'README';
+const CONTENT = `# <Repo Name>
+
+## Getting Started
+
+## Contributing
+
+See [Contributing.md](./CONTRIBUTING.md)`;
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-readme',
@@ -38,7 +45,7 @@ export const rule: RuleInterface<Messages, Schema> = {
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { extension, baseName: FILENAME }
+      { extension, baseName: FILENAME, getContent: () => CONTENT }
     );
   },
 };

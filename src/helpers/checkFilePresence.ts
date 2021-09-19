@@ -2,7 +2,7 @@ import type { ExecParams, ExecReturn } from '../rule';
 
 export async function checkFilePresence(
   params: Pick<ExecParams<'presence', any>, 'fs' | 'report'>,
-  { baseName, getContent }: { baseName: string; getContent?: () => string }
+  { baseName, getContent }: { baseName: string; getContent: () => string }
 ): Promise<ExecReturn> {
   const exists = await params.fs.fileExists(baseName);
   if (exists) {

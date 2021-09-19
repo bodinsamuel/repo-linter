@@ -5,6 +5,9 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.renovaterc';
+const CONTENT = JSON.stringify({
+  extends: ['config:js-app', 'algolia'],
+});
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-renovaterc',
@@ -38,7 +41,7 @@ export const rule: RuleInterface<Messages, Schema> = {
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { extension, baseName: FILENAME }
+      { extension, baseName: FILENAME, getContent: () => CONTENT }
     );
   },
 };

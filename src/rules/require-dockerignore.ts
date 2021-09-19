@@ -37,7 +37,8 @@ docs/
 *.md
 cypress/
 **/.DS_Store
-docker-compose.yml`;
+docker-compose.yml
+*.tsbuildinfo`;
 
 export const rule: RuleInterface<Messages> = {
   name: 'base/require-dockerignore',

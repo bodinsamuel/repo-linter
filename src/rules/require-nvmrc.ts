@@ -20,7 +20,7 @@ export const rule: RuleInterface<Messages> = {
   async exec({ fs, report }) {
     return await checkFilePresence(
       { fs, report },
-      { baseName: FILENAME, getContent: () => '14.17.6' }
+      { baseName: FILENAME, getContent: () => process.version.substr(1) }
     );
   },
 };

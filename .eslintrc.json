@@ -4,6 +4,10 @@
     "algolia/jest",
     "algolia/typescript"
   ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "jest"
+  ],
   "rules": {
     "no-continue": "off",
     "consistent-return": "off",
@@ -14,5 +18,6 @@
         "allowHigherOrderFunctions": true
       }
     ]
-  }
+  },
+  "overrides": []
 }

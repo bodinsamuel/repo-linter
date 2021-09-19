@@ -5,6 +5,13 @@ type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
 const FILENAME = '.prettierrc';
+const CONTENT = JSON.stringify({
+  trailingComma: 'es5',
+  tabWidth: 2,
+  semi: true,
+  singleQuote: true,
+  printWidth: 80,
+});
 
 export const rule: RuleInterface<Messages, Schema> = {
   name: 'base/require-prettierrc',
@@ -38,7 +45,7 @@ export const rule: RuleInterface<Messages, Schema> = {
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { baseName: FILENAME, extension }
+      { baseName: FILENAME, extension, getContent: () => CONTENT }
     );
   },
 };
