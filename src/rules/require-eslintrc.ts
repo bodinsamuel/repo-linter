@@ -1,7 +1,8 @@
+import { checkFileNameWithExtension } from '../helpers';
 import type { RuleInterface } from '../rule';
 
-type Messages = 'presence';
-type Schema = { extension: string };
+type Messages = 'extension' | 'presence';
+type Schema = { extension?: string };
 
 const FILENAME = '.eslintrc';
 
@@ -14,13 +15,30 @@ export const rule: RuleInterface<Messages, Schema> = {
   },
 
   messages: {
-    presence: `Expected file "${FILENAME}" to exists.`,
+    presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
+    extension: ({ fileName }) =>
+      `Expected file "${fileName}" to have the correct extension.`,
   },
 
-  async exec({ fs, report }) {
-    const exists = await fs.fileExists(FILENAME);
-    if (!exists) {
-      report('presence');
-    }
+  schema: {
+    type: 'object',
+    properties: {
+      extension: {
+        type: 'string',
+        enum: ['json', 'yaml', 'yml', 'js', 'cjs', ''],
+        nullable: true,
+      },
+    },
+    required: [],
+    additionalProperties: false,
+  },
+
+  async exec({ fs, report, options, getReport }) {
+    const extension = options.extension || '';
+
+    return await checkFileNameWithExtension(
+      { fs, report, getReport },
+      { extension, baseName: FILENAME }
+    );
   },
 };

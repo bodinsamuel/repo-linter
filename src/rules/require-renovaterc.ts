@@ -4,10 +4,10 @@ import type { RuleInterface } from '../rule';
 type Messages = 'extension' | 'presence';
 type Schema = { extension?: string };
 
-const FILENAME = 'CONTRIBUTING';
+const FILENAME = '.renovaterc';
 
 export const rule: RuleInterface<Messages, Schema> = {
-  name: 'base/require-contributing',
+  name: 'base/require-renovaterc',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
@@ -25,7 +25,7 @@ export const rule: RuleInterface<Messages, Schema> = {
     properties: {
       extension: {
         type: 'string',
-        enum: ['md', ''],
+        enum: ['json', 'json5', ''],
         nullable: true,
       },
     },

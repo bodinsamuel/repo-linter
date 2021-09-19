@@ -15,8 +15,7 @@ export const rule: RuleInterface<Messages, Schema> = {
   },
 
   messages: {
-    presence: ({ preferredName }) =>
-      `Expected file "${preferredName}" to exists.`,
+    presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
     extension: ({ fileName }) =>
       `Expected file "${fileName}" to have the correct extension.`,
   },
@@ -35,12 +34,11 @@ export const rule: RuleInterface<Messages, Schema> = {
   },
 
   async exec({ fs, report, options, getReport }) {
-    const allowedExt = options.extension || '';
-    const preferredName = `${FILENAME}${allowedExt ? `.${allowedExt}` : ''}`;
+    const extension = options.extension || '';
 
     return await checkFileNameWithExtension(
       { fs, report, getReport },
-      { allowedExt, preferredName }
+      { extension, baseName: FILENAME }
     );
   },
 };
