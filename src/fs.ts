@@ -5,8 +5,15 @@ import path from 'path';
 export class FS {
   #base;
 
-  constructor(base: string) {
-    this.#base = base;
+  constructor({ base }: { base: string }) {
+    this.#base = path.isAbsolute(base)
+      ? base
+      : // eslint-disable-next-line dot-notation
+        path.join(process.env['PWD'] || __dirname, base);
+  }
+
+  get base(): string {
+    return this.#base;
   }
 
   toAbsolute(file: string): string {
@@ -15,6 +22,15 @@ export class FS {
 
   toBase(file: string): string {
     return this.toAbsolute(file).replace(this.#base, '');
+  }
+
+  async dirExists(dir: string): Promise<boolean> {
+    try {
+      await fs.access(this.toAbsolute(dir), constants.R_OK);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async fileExists(file: string): Promise<boolean> {

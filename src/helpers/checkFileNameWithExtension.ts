@@ -36,7 +36,7 @@ export async function checkFileNameWithExtension(
   // If it does not exists but one file matched, we just change the extension
   if (reported.length === 1) {
     return async (): Promise<void> => {
-      await params.fs.fileRename(reported[0].data.fileName, fullName);
+      await params.fs.fileRename(reported[0]!.data.fileName, fullName);
     };
   }
 

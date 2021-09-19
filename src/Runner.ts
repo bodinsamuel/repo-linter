@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import path from 'path';
 
+import { RepoLinterError } from './Error';
 import type { Reporter } from './Reporter';
 import type { FS } from './fs';
 import type { RuleInterface, Options } from './rule';
@@ -13,8 +14,8 @@ export interface Config {
 }
 
 export class Runner {
-  filePath;
-
+  #rcPath;
+  #folder;
   #rc?: string | void;
   #config?: Config;
   #registry = new Map<string, RuleInterface<any>>();
@@ -23,15 +24,23 @@ export class Runner {
   #fix: boolean;
 
   constructor(opts: {
-    filePath: string;
+    rcPath: string;
     reporter: Reporter;
     fs: FS;
     fix: boolean;
   }) {
-    this.filePath = opts.filePath;
-    this.#reporter = opts.reporter;
     this.#fs = opts.fs;
+    this.#rcPath = opts.rcPath;
+    this.#folder = this.#fs.base;
+    this.#reporter = opts.reporter;
     this.#fix = opts.fix;
+  }
+
+  get rcPath(): string {
+    return this.#rcPath;
+  }
+  get folder(): string {
+    return this.#folder;
   }
 
   async run(): Promise<void> {
@@ -39,31 +48,35 @@ export class Runner {
     this.parseConfig();
     await this.autoRegister();
     await this.exec();
-    this.#reporter.toCli();
   }
 
   async loadConfig(): Promise<void> {
-    this.#rc = await this.#fs.fileLoad(this.filePath);
+    this.#rc = await this.#fs.fileLoad(this.#rcPath);
   }
 
   parseConfig(): void {
     if (!this.#rc) {
-      throw new Error(`No config file loaded at "${this.filePath}"`);
+      throw new RepoLinterError(`No config file at "${this.#rcPath}"`);
     }
     if (this.#config) {
-      throw new Error(`Config already loaded`);
+      throw new RepoLinterError(`Config already loaded.`);
     }
 
     let json: Config;
     try {
       json = JSON.parse(this.#rc);
     } catch (err) {
-      throw new Error(`Invalid config, ${err}`);
+      if (err instanceof Error) {
+        throw new RepoLinterError(
+          `Invalid JSON ("${this.#rcPath}"): ${err.message}.`
+        );
+      }
+      throw err;
     }
 
     const is = isConfig(json);
     if (!is) {
-      throw new Error('Invalid config');
+      throw new RepoLinterError(`Invalid config content "${this.#rcPath}"`);
     }
 
     this.#config = json;
@@ -76,7 +89,7 @@ export class Runner {
     }
 
     if (this.#registry.has(rule.name)) {
-      throw new Error(`Rule "${rule.name}" already defined`);
+      throw new RepoLinterError(`Rule "${rule.name}" already defined.`);
     }
 
     this.#registry.set(rule.name, rule);
@@ -88,13 +101,17 @@ export class Runner {
       !this.#config.rules ||
       Object.keys(this.#config.rules).length <= 0
     ) {
-      throw new Error('No rules to executes');
+      throw new RepoLinterError('No rules to executes.');
+    }
+
+    if (!(await this.#fs.dirExists(this.#fs.base))) {
+      throw new RepoLinterError(`Folder "${this.#fs.base}" does not exist.`);
     }
 
     for await (const [name, options] of Object.entries(this.#config.rules)) {
       if (!this.#registry.has(name)) {
         const list = Array.from(this.#registry.keys());
-        throw new Error(
+        throw new RepoLinterError(
           `No rule exists with name "${name}". (rules: ${JSON.stringify(list)})`
         );
       }
@@ -104,9 +121,7 @@ export class Runner {
       rule.validate();
       await rule.exec(this.#fs, this.#fix);
 
-      if (rule.hasReport()) {
-        this.#reporter.add(rule);
-      }
+      this.#reporter.add(rule);
     }
   }
 
@@ -125,8 +140,9 @@ export class Runner {
         if (split.length <= 1) {
           throw new Error(`Unknown extends ${name}`);
         }
-        const ruleset = split[1];
-        if (!(split[1] in rulesets)) {
+
+        const ruleset = split[1]!;
+        if (!(ruleset in rulesets)) {
           throw new Error(
             `Unknown extends "${ruleset}" in plugin "${split[0]}" (${name})`
           );

@@ -1,7 +1,9 @@
 import path from 'path';
 
+import chalk from 'chalk';
 import yargs from 'yargs';
 
+import { RepoLinterError } from './Error';
 import { Reporter } from './Reporter';
 import { Runner } from './Runner';
 import { FILENAME } from './constants';
@@ -29,11 +31,25 @@ const argv = yargs.usage('Lint a repository').options({
 }).argv;
 
 (async (): Promise<void> => {
+  const reporter = new Reporter();
+  const folder = argv.folder ? argv.folder : path.join(__dirname, '..');
   const runner = new Runner({
-    filePath: argv.config ? argv.config : path.join(__dirname, '..', FILENAME),
-    reporter: new Reporter(),
-    fs: new FS(argv.folder ? argv.folder : path.join(__dirname, '..')),
+    rcPath: argv.config ? argv.config : path.join(__dirname, '..', FILENAME),
+    reporter,
+    fs: new FS({ base: folder }),
     fix: argv.fix === true,
   });
-  await runner.run();
+
+  try {
+    await runner.run();
+  } catch (err) {
+    if (err instanceof RepoLinterError) {
+      // eslint-disable-next-line no-console
+      console.log(chalk.red('[ERROR]'), err.message);
+      // eslint-disable-next-line no-process-exit
+      process.exit(1);
+    }
+  }
+
+  reporter.toCli(runner);
 })();
