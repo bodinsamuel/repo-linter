@@ -53,7 +53,7 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     }
   }
 
-  report(name: TMessage, data?: any): void {
+  report(name: TMessage, data: any = {}): void {
     let message = this.#rule.messages[name];
     if (typeof message === 'function') {
       message = message(data);

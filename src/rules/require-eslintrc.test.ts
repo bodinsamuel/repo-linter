@@ -10,7 +10,7 @@ const spy = jest.spyOn(fsPromise, 'readdir');
 const fs = new FS({});
 const rule = ruleRaw as RuleInterface<any>;
 
-describe('changelog', () => {
+describe('eslintrc', () => {
   it('should report passed', async () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
