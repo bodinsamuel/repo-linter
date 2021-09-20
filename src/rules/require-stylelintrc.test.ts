@@ -4,7 +4,7 @@ import { FS } from '../fs';
 import type { RuleInterface } from '../rule';
 import { RuleWrapper } from '../rule';
 
-import { def as ruleRaw } from './require-changelog';
+import { def as ruleRaw } from './require-stylelintrc';
 
 const spy = jest.spyOn(fsPromise, 'readdir');
 const fs = new FS({});
@@ -15,7 +15,7 @@ describe('changelog', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CHANGELOG'] as any);
+    spy.mockResolvedValueOnce(['.stylelintrc'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('changelog', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: 'CHANGELOG',
+      fullName: '.stylelintrc',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: 'CHANGELOG' },
-        message: 'Expected file "CHANGELOG" to exists.',
+        data: { fullName: '.stylelintrc' },
+        message: 'Expected file ".stylelintrc" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,19 +47,19 @@ describe('changelog', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CHANGELOG.sh' as any]);
+    spy.mockResolvedValueOnce(['.stylelintrc.sh' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('extension', {
       extension: '',
-      fileName: 'CHANGELOG.sh',
+      fileName: '.stylelintrc.sh',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: '', fileName: 'CHANGELOG.sh' },
+        data: { extension: '', fileName: '.stylelintrc.sh' },
         message:
-          'Expected file "CHANGELOG.sh" to have the correct extension (no extension).',
+          'Expected file ".stylelintrc.sh" to have the correct extension (no extension).',
         name: 'extension',
       },
     ]);

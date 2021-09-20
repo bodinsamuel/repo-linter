@@ -4,7 +4,7 @@ import { FS } from '../fs';
 import type { RuleInterface } from '../rule';
 import { RuleWrapper } from '../rule';
 
-import { def as ruleRaw } from './require-changelog';
+import { def as ruleRaw } from './require-contributing';
 
 const spy = jest.spyOn(fsPromise, 'readdir');
 const fs = new FS({});
@@ -15,7 +15,7 @@ describe('changelog', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CHANGELOG'] as any);
+    spy.mockResolvedValueOnce(['CONTRIBUTING'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('changelog', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: 'CHANGELOG',
+      fullName: 'CONTRIBUTING',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: 'CHANGELOG' },
-        message: 'Expected file "CHANGELOG" to exists.',
+        data: { fullName: 'CONTRIBUTING' },
+        message: 'Expected file "CONTRIBUTING" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,19 +47,19 @@ describe('changelog', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CHANGELOG.sh' as any]);
+    spy.mockResolvedValueOnce(['CONTRIBUTING.sh' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('extension', {
       extension: '',
-      fileName: 'CHANGELOG.sh',
+      fileName: 'CONTRIBUTING.sh',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: '', fileName: 'CHANGELOG.sh' },
+        data: { extension: '', fileName: 'CONTRIBUTING.sh' },
         message:
-          'Expected file "CHANGELOG.sh" to have the correct extension (no extension).',
+          'Expected file "CONTRIBUTING.sh" to have the correct extension (no extension).',
         name: 'extension',
       },
     ]);

@@ -6,7 +6,10 @@ import { RuleWrapper } from '../rule';
 
 import { checkFileNameWithExtension } from './checkFileNameWithExtension';
 
-const spy = jest.spyOn(fsPromise, 'readdir');
+const spyList = jest.spyOn(fsPromise, 'readdir');
+const spyWrite = jest.spyOn(fsPromise, 'writeFile');
+const spyRename = jest.spyOn(fsPromise, 'rename');
+
 const fs = new FS({});
 const baseName = 'foobar';
 const getContent = (): string => '';
@@ -24,11 +27,17 @@ const rule: RuleInterface<'extension' | 'presence', never> = {
 };
 
 describe('checkFileNameWithExtension', () => {
+  beforeEach(() => {
+    spyList.mockClear();
+    spyWrite.mockClear();
+    spyRename.mockClear();
+  });
+
   it('should find the file with the correct name', async () => {
     const r = new RuleWrapper(rule, ['error'], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['foobar'] as any);
+    spyList.mockResolvedValueOnce(['foobar'] as any);
 
     const check = await checkFileNameWithExtension(r, {
       extension: '',
@@ -44,7 +53,7 @@ describe('checkFileNameWithExtension', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['foobar.txt'] as any);
+    spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
       extension: 'txt',
@@ -57,10 +66,10 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should find the file and report incorrect extension', async () => {
-    const r = new RuleWrapper<'extension'>(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error'], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['foobar.txt'] as any);
+    spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
       extension: '',
@@ -76,10 +85,10 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should report multiple incorrect extension', async () => {
-    const r = new RuleWrapper<'extension'>(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error'], fs);
     const report = jest.spyOn(r, 'report');
 
-    spy.mockResolvedValueOnce(['foobar.txt', 'foobar.json'] as any);
+    spyList.mockResolvedValueOnce(['foobar.txt', 'foobar.json'] as any);
 
     const check = await checkFileNameWithExtension(r, {
       extension: '',
@@ -91,10 +100,10 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should not find the file', async () => {
-    const r = new RuleWrapper<'extension'>(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error'], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['bar.foo', 'barfoo.json', 'barfoo'] as any);
+    spyList.mockResolvedValueOnce(['bar.foo', 'barfoo.json', 'barfoo'] as any);
 
     const check = await checkFileNameWithExtension(r, {
       extension: '',
@@ -104,5 +113,40 @@ describe('checkFileNameWithExtension', () => {
     expect(check).toBeInstanceOf(Function);
     expect(report).toHaveBeenCalledWith('presence', { fullName: 'foobar' });
     expect(reports).toHaveBeenCalled();
+  });
+
+  describe('fixer', () => {
+    it('should create file if missing', async () => {
+      const r = new RuleWrapper(rule, ['error'], fs);
+      spyList.mockResolvedValueOnce([]);
+      spyWrite.mockResolvedValue();
+
+      const fixer = await checkFileNameWithExtension(r, {
+        extension: '',
+        baseName,
+        getContent,
+      });
+      await fixer!();
+      expect(spyWrite).toHaveBeenCalledWith(r.fs.toAbsolute('foobar'), '');
+      expect(spyRename).not.toHaveBeenCalled();
+    });
+
+    it('should rename if wrong extension', async () => {
+      const r = new RuleWrapper(rule, ['error'], fs);
+      spyList.mockResolvedValueOnce(['foobar.sh' as any]);
+      spyRename.mockResolvedValue();
+
+      const fixer = await checkFileNameWithExtension(r, {
+        extension: '',
+        baseName,
+        getContent,
+      });
+      await fixer!();
+      expect(spyRename).toHaveBeenCalledWith(
+        r.fs.toAbsolute('foobar.sh'),
+        'foobar'
+      );
+      expect(spyWrite).not.toHaveBeenCalled();
+    });
   });
 });
