@@ -5,7 +5,7 @@ type Messages = 'presence';
 
 const FILENAME = '.nvmrc';
 
-export const rule: RuleInterface<Messages> = {
+export const def: RuleInterface<Messages> = {
   name: 'base/require-nvmrc',
 
   docs: {
@@ -17,10 +17,10 @@ export const rule: RuleInterface<Messages> = {
     presence: `Expected file "${FILENAME}" to exists.`,
   },
 
-  async exec({ fs, report }) {
-    return await checkFilePresence(
-      { fs, report },
-      { baseName: FILENAME, getContent: () => process.version.substr(1) }
-    );
+  async exec(rule) {
+    return await checkFilePresence(rule, {
+      baseName: FILENAME,
+      getContent: () => process.version.substr(1),
+    });
   },
 };

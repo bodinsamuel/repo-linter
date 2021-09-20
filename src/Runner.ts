@@ -39,10 +39,14 @@ export class Runner {
   get rcPath(): string {
     return this.#rcPath;
   }
+
   get folder(): string {
     return this.#folder;
   }
 
+  /**
+   * Load, parse and execute.
+   */
   async run(): Promise<void> {
     await this.loadConfig();
     this.parseConfig();
@@ -50,10 +54,16 @@ export class Runner {
     await this.exec();
   }
 
+  /**
+   * Load rc file.
+   */
   async loadConfig(): Promise<void> {
     this.#rc = await this.#fs.fileLoad(this.#rcPath);
   }
 
+  /**
+   * Parse loaded rc file.
+   */
   parseConfig(): void {
     if (!this.#rc) {
       throw new RepoLinterError(`No config file at "${this.#rcPath}"`);
@@ -82,19 +92,9 @@ export class Runner {
     this.#config = json;
   }
 
-  register(filePath: string): void {
-    const rule = require(filePath).rule;
-    if (!validateRule(rule)) {
-      return;
-    }
-
-    if (this.#registry.has(rule.name)) {
-      throw new RepoLinterError(`Rule "${rule.name}" already defined.`);
-    }
-
-    this.#registry.set(rule.name, rule);
-  }
-
+  /**
+   * Execute rules against a repo.
+   */
   async exec(): Promise<void> {
     if (
       !this.#config ||
@@ -117,12 +117,28 @@ export class Runner {
       }
 
       const def = this.#registry.get(name)!;
-      const rule = new RuleWrapper(def, options);
+      const rule = new RuleWrapper(def, options, this.#fs);
       rule.validate();
-      await rule.exec(this.#fs, this.#fix);
+      await rule.exec(this.#fix);
 
       this.#reporter.add(rule);
     }
+  }
+
+  /**
+   * Register a rule file.
+   */
+  register(filePath: string): void {
+    const rule = require(filePath).def;
+    if (!validateRule(rule)) {
+      return;
+    }
+
+    if (this.#registry.has(rule.name)) {
+      throw new RepoLinterError(`Rule "${rule.name}" already defined.`);
+    }
+
+    this.#registry.set(rule.name, rule);
   }
 
   private async autoRegister(): Promise<void> {

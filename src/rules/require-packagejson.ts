@@ -5,7 +5,7 @@ type Messages = 'presence';
 
 const FILENAME = 'package.json';
 
-export const rule: RuleInterface<Messages> = {
+export const def: RuleInterface<Messages> = {
   name: 'base/require-packagejson',
 
   docs: {
@@ -17,13 +17,13 @@ export const rule: RuleInterface<Messages> = {
     presence: `Expected file "${FILENAME}" to exists.`,
   },
 
-  async exec({ fs, report }) {
-    const exists = await fs.fileExists(FILENAME);
+  async exec(rule) {
+    const exists = await rule.fs.fileExists(FILENAME);
     if (exists) {
       return;
     }
 
-    report('presence');
+    rule.report('presence');
     return async (): Promise<void> => {
       await exec('yarn init --yp');
     };

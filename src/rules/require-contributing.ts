@@ -23,7 +23,7 @@ const CONTENT = `# Contributing
 \`\`\`sh
 \`\`\``;
 
-export const rule: RuleInterface<Messages, Schema> = {
+export const def: RuleInterface<Messages, Schema> = {
   name: 'base/require-contributing',
 
   docs: {
@@ -50,12 +50,13 @@ export const rule: RuleInterface<Messages, Schema> = {
     additionalProperties: false,
   },
 
-  async exec({ fs, report, options, getReport }) {
-    const extension = options.extension || '';
+  async exec(rule) {
+    const extension = rule.options?.extension || '';
 
-    return await checkFileNameWithExtension(
-      { fs, report, getReport },
-      { extension, baseName: FILENAME, getContent: () => CONTENT }
-    );
+    return await checkFileNameWithExtension(rule, {
+      extension,
+      baseName: FILENAME,
+      getContent: () => CONTENT,
+    });
   },
 };

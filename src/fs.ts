@@ -5,11 +5,12 @@ import path from 'path';
 export class FS {
   #base;
 
-  constructor({ base }: { base: string }) {
-    this.#base = path.isAbsolute(base)
-      ? base
-      : // eslint-disable-next-line dot-notation
-        path.join(process.env['PWD'] || __dirname, base);
+  constructor({ base }: { base?: string }) {
+    this.#base =
+      base && path.isAbsolute(base)
+        ? base
+        : // eslint-disable-next-line dot-notation
+          path.join(process.env['PWD'] || __dirname, base || './');
   }
 
   get base(): string {

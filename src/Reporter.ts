@@ -16,10 +16,13 @@ export class Reporter {
     this.#messages.push({ rule });
   }
 
-  toCli(runner: Runner): void {
+  /**
+   * Output to CLI.
+   */
+  toCli(runner: Runner): boolean {
     if (this.#messages.length <= 0) {
       console.log('Done');
-      return;
+      return true;
     }
 
     this.#rulesTotal = this.#messages.length;
@@ -28,9 +31,9 @@ export class Reporter {
     console.log('');
 
     for (const msg of this.#messages) {
-      const name = msg.rule.getName();
-      const reps = msg.rule.getReport();
-      const sev = msg.rule.getSeverity();
+      const name = msg.rule.name;
+      const reps = msg.rule.reports;
+      const sev = msg.rule.severity;
       if (reps.length <= 0) {
         this.#rulesSuccess += 1;
         continue;
@@ -52,6 +55,8 @@ export class Reporter {
     console.groupEnd();
 
     console.log(chalk.bold('Rules:'), this.getRulesReport().join(', '));
+
+    return this.#rulesError <= 0;
   }
 
   private getRulesReport(): string[] {

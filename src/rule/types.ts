@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv';
 
-import type { FS } from '../fs';
+import type { RuleWrapper } from './Wrapper';
 
 export type Severity = 'error' | 'off' | 'warn';
 
@@ -14,13 +14,6 @@ export type Reported<TMessage extends string> = {
 
 export type Fixer = () => Promise<void> | void;
 
-export type ExecParams<TMessage extends string, TSchema = never> = {
-  fs: FS;
-  report: (name: TMessage, data?: any) => void;
-  getReport: () => Array<Reported<TMessage>>;
-  options: TSchema;
-  severity: Severity;
-};
 export type ExecReturn = Fixer | void;
 
 export interface RuleInterface<TMessage extends string, TSchema = never> {
@@ -33,6 +26,6 @@ export interface RuleInterface<TMessage extends string, TSchema = never> {
   schema?: JSONSchemaType<TSchema>;
 
   exec: (
-    opts: ExecParams<TMessage, TSchema>
+    wrapper: RuleWrapper<TMessage, TSchema>
   ) => ExecReturn | Promise<ExecReturn>;
 }

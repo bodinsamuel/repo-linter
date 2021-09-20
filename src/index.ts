@@ -9,30 +9,37 @@ import { Runner } from './Runner';
 import { FILENAME } from './constants';
 import { FS } from './fs';
 
-const argv = yargs.usage('Lint a repository').options({
-  config: {
-    description: 'Path of the ".repolinterrc.json',
-    requiresArg: false,
+const argv = yargs
+  .usage('Lint a repository')
+  .example([
+    ['repo-linter -c ~/.repolinterrc.json -r ~/my-repository', ''],
+    ['repo-linter --fix', ''],
+  ])
+  .strict(true)
+  .option('config', {
+    description: 'Path of the ".repolinterrc.json"',
+    requiresArg: true,
     demandOption: false,
     string: true,
-  },
-  folder: {
+    alias: 'c',
+  })
+  .option('repo', {
     description: 'Path of the repository to fix',
-    requiresArg: false,
+    requiresArg: true,
     demandOption: false,
     string: true,
-  },
-  fix: {
+    alias: 'r',
+  })
+  .option('fix', {
     description: 'Automatically fix problems',
     requiresArg: false,
     demandOption: false,
     boolean: true,
-  },
-}).argv;
+  }).argv;
 
 (async (): Promise<void> => {
   const reporter = new Reporter();
-  const folder = argv.folder ? argv.folder : path.join(__dirname, '..');
+  const folder = argv.repo ? argv.repo : path.join(__dirname, '..');
   const runner = new Runner({
     rcPath: argv.config ? argv.config : path.join(__dirname, '..', FILENAME),
     reporter,
@@ -45,11 +52,14 @@ const argv = yargs.usage('Lint a repository').options({
   } catch (err) {
     if (err instanceof RepoLinterError) {
       // eslint-disable-next-line no-console
-      console.log(chalk.red('[ERROR]'), err.message);
+      console.log(chalk.redBright('[ERROR]'), err.message);
       // eslint-disable-next-line no-process-exit
       process.exit(1);
     }
   }
 
-  reporter.toCli(runner);
+  const passed = reporter.toCli(runner);
+
+  // eslint-disable-next-line no-process-exit
+  process.exit(passed ? 0 : 1);
 })();

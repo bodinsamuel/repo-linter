@@ -13,15 +13,21 @@ import type {
 const ajv = new Ajv();
 
 export class RuleWrapper<TMessage extends string, TSchema = never> {
+  #fs;
   #rule: RuleInterface<TMessage>;
-  #options: TSchema | undefined;
+  #options: TSchema;
   #reported: Array<Reported<TMessage>> = [];
   #severity: Severity;
 
-  constructor(rule: RuleInterface<TMessage>, options: Options<TSchema>) {
+  constructor(
+    rule: RuleInterface<TMessage>,
+    options: Options<TSchema>,
+    fs: FS
+  ) {
     this.#rule = rule;
     this.#severity = options[0];
-    this.#options = options[1];
+    this.#options = options[1]!;
+    this.#fs = fs;
   }
 
   validate(): void {
@@ -55,14 +61,8 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     this.#reported.push({ name, message, data });
   }
 
-  async exec(fs: FS, fix: boolean): Promise<ExecReturn | Promise<ExecReturn>> {
-    const fixer = await this.#rule.exec({
-      fs,
-      report: (name, data) => this.report(name, data),
-      getReport: () => this.getReport(),
-      options: (this.#options || {}) as never,
-      severity: this.#severity,
-    });
+  async exec(fix: boolean): Promise<ExecReturn | Promise<ExecReturn>> {
+    const fixer = await this.#rule.exec(this as any); // I don't get it
 
     if (fix && fixer) {
       await fixer();
@@ -70,30 +70,33 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
       // Clear everything
       this.#reported.splice(0);
 
-      // Try again if there is no error anymore it's fine, otherwise it will report the second error
-      await this.#rule.exec({
-        fs,
-        report: (name, data) => this.report(name, data),
-        getReport: () => this.getReport(),
-        options: (this.#options || {}) as never,
-        severity: this.#severity,
-      });
+      // Try again if there is no error anymore it's fine
+      // otherwise it will report the second error
+      await this.#rule.exec(this as any); // I don't get it
     }
   }
 
-  getName(): string {
+  get name(): string {
     return this.#rule.name;
+  }
+
+  get fs(): FS {
+    return this.#fs;
+  }
+
+  get options(): TSchema | undefined {
+    return this.#options;
+  }
+
+  get reports(): Array<Reported<TMessage>> {
+    return this.#reported;
+  }
+
+  get severity(): Severity {
+    return this.#severity;
   }
 
   hasReport(): boolean {
     return this.#reported.length > 0;
-  }
-
-  getReport(): Array<Reported<TMessage>> {
-    return this.#reported;
-  }
-
-  getSeverity(): Severity {
-    return this.#severity;
   }
 }

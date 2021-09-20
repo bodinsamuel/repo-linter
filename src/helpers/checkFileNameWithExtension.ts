@@ -1,10 +1,7 @@
-import type { ExecParams, ExecReturn } from '../rule';
+import type { ExecReturn, RuleWrapper } from '../rule';
 
 export async function checkFileNameWithExtension(
-  params: Pick<
-    ExecParams<'extension' | 'presence', any>,
-    'fs' | 'getReport' | 'report'
-  >,
+  params: RuleWrapper<'extension' | 'presence', any>,
   {
     extension,
     baseName,
@@ -20,7 +17,7 @@ export async function checkFileNameWithExtension(
       continue;
     }
 
-    if (extension && !file.endsWith(`.${extension}`)) {
+    if (fullName !== file) {
       params.report('extension', { fileName: file, extension });
       continue;
     }
@@ -31,7 +28,7 @@ export async function checkFileNameWithExtension(
     return;
   }
 
-  const reported = params.getReport();
+  const reported = params.reports;
 
   // If it does not exists but one file matched, we just change the extension
   if (reported.length === 1) {
@@ -42,7 +39,7 @@ export async function checkFileNameWithExtension(
 
   params.report('presence', { fullName });
 
-  if (reported.length === 1 && getContent) {
+  if (reported.length === 1) {
     // If it matched no other file we just create it
     return async (): Promise<void> => {
       await params.fs.fileWrite(`./${fullName}`, getContent());
