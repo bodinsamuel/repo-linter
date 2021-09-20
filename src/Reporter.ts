@@ -20,11 +20,6 @@ export class Reporter {
    * Output to CLI.
    */
   toCli(runner: Runner): boolean {
-    if (this.#messages.length <= 0) {
-      console.log('Done');
-      return true;
-    }
-
     this.#rulesTotal = this.#messages.length;
 
     console.group(chalk.gray(`Linting`), chalk.dim.underline(runner.folder));

@@ -145,30 +145,35 @@ export class Runner {
     // Base plugin
     const files = await this.#fs.listFiles(path.join(__dirname, 'rules'));
     for (const file of files) {
+      if (file.endsWith('.test.js')) {
+        continue;
+      }
       this.register(path.join(__dirname, 'rules', file));
     }
 
-    if (this.#config?.extends && this.#config?.extends.length > 0) {
-      const { rulesets } = require(path.join(__dirname, 'ruleset'));
+    if (!this.#config?.extends || this.#config.extends.length <= 0) {
+      return;
+    }
 
-      for (const name of this.#config.extends) {
-        const split = name.split('/');
-        if (split.length <= 1) {
-          throw new Error(`Unknown extends ${name}`);
-        }
+    const { rulesets } = require(path.join(__dirname, 'ruleset'));
 
-        const ruleset = split[1]!;
-        if (!(ruleset in rulesets)) {
-          throw new Error(
-            `Unknown extends "${ruleset}" in plugin "${split[0]}" (${name})`
-          );
-        }
-
-        this.#config.rules = {
-          ...rulesets[ruleset],
-          ...(this.#config?.rules || {}),
-        };
+    for (const name of this.#config.extends) {
+      const split = name.split('/');
+      if (split.length <= 1) {
+        throw new Error(`Unknown extends ${name}`);
       }
+
+      const ruleset = split[1]!;
+      if (!(ruleset in rulesets)) {
+        throw new RepoLinterError(
+          `Unknown extends "${ruleset}" in plugin "${split[0]}" (${name})`
+        );
+      }
+
+      this.#config.rules = {
+        ...rulesets[ruleset],
+        ...(this.#config?.rules || {}),
+      };
     }
   }
 }

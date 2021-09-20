@@ -56,6 +56,7 @@ const argv = yargs
       // eslint-disable-next-line no-process-exit
       process.exit(1);
     }
+    throw err;
   }
 
   const passed = reporter.toCli(runner);
