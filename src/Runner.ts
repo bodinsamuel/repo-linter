@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import path from 'path';
 
 import { RepoLinterError } from './Error';
 import type { Reporter } from './Reporter';
+import { RULES_PATH } from './constants';
 import type { FS } from './fs';
 import type { RuleInterface, Options } from './rule';
 import { RuleWrapper, validateRule } from './rule';
+import type { Rules, Rulesets } from './types';
 
 export interface Config {
   plugins?: string[];
-  rules?: Record<string, Options>;
+  rules?: Record<string, Options<any>>;
   extends?: string[];
 }
 
@@ -18,7 +19,7 @@ export class Runner {
   #folder;
   #rc?: string | void;
   #config?: Config;
-  #registry = new Map<string, RuleInterface<any>>();
+  #registry = new Map<string, RuleInterface<any, any>>();
   #reporter: Reporter;
   #fs: FS;
   #fix: boolean;
@@ -128,8 +129,7 @@ export class Runner {
   /**
    * Register a rule file.
    */
-  register(filePath: string): void {
-    const rule = require(filePath).def;
+  register(rule: RuleInterface<any, any>): void {
     if (!validateRule(rule)) {
       return;
     }
@@ -141,21 +141,22 @@ export class Runner {
     this.#registry.set(rule.name, rule);
   }
 
-  private async autoRegister(): Promise<void> {
-    // Base plugin
-    const files = await this.#fs.listFiles(path.join(__dirname, 'rules'));
-    for (const file of files) {
-      if (file.endsWith('.test.js')) {
-        continue;
-      }
-      this.register(path.join(__dirname, 'rules', file));
+  private autoRegister(): void {
+    const {
+      rulesets,
+      rules,
+    }: {
+      rulesets: Rulesets;
+      rules: Rules;
+    } = require(RULES_PATH);
+
+    for (const file of Object.values(rules)) {
+      this.register(file.def);
     }
 
     if (!this.#config?.extends || this.#config.extends.length <= 0) {
       return;
     }
-
-    const { rulesets } = require(path.join(__dirname, 'ruleset'));
 
     for (const name of this.#config.extends) {
       const split = name.split('/');

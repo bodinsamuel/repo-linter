@@ -5,14 +5,14 @@ import type { Runner } from './Runner';
 import type { RuleWrapper } from './rule';
 
 export class Reporter {
-  #messages: Array<{ rule: RuleWrapper<any> }> = [];
+  #messages: Array<{ rule: RuleWrapper<any, any> }> = [];
 
   #rulesSuccess = 0;
   #rulesTotal = 0;
   #rulesError = 0;
   #rulesWarn = 0;
 
-  add(rule: RuleWrapper<any>): void {
+  add(rule: RuleWrapper<any, any>): void {
     this.#messages.push({ rule });
   }
 

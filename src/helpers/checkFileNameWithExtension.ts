@@ -1,12 +1,18 @@
 import type { ExecReturn, RuleWrapper } from '../rule';
 
 export async function checkFileNameWithExtension(
-  params: RuleWrapper<'extension' | 'presence', any>,
+  params: RuleWrapper<'extension' | 'presence', { required?: boolean }>,
   {
+    required,
     extension,
     baseName,
     getContent,
-  }: { extension: string; baseName: string; getContent: () => string }
+  }: {
+    required: boolean;
+    extension: string;
+    baseName: string;
+    getContent: () => string;
+  }
 ): Promise<ExecReturn> {
   const list = await params.fs.listFiles('./');
   const fullName = `${baseName}${extension ? `.${extension}` : ''}`;
@@ -35,6 +41,9 @@ export async function checkFileNameWithExtension(
     return async (): Promise<void> => {
       await params.fs.fileRename(reported[0]!.data.fileName, fullName);
     };
+  }
+  if (!required) {
+    return;
   }
 
   params.report('presence', { fullName });

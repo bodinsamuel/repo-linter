@@ -14,13 +14,13 @@ const ajv = new Ajv();
 
 export class RuleWrapper<TMessage extends string, TSchema = never> {
   #fs;
-  #rule: RuleInterface<TMessage>;
+  #rule: RuleInterface<TMessage, TSchema>;
   #options: TSchema;
   #reported: Array<Reported<TMessage>> = [];
   #severity: Severity;
 
   constructor(
-    rule: RuleInterface<TMessage>,
+    rule: RuleInterface<TMessage, TSchema>,
     options: Options<TSchema>,
     fs: FS
   ) {

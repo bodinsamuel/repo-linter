@@ -29,7 +29,8 @@
   },
   "scripts": {
     "hot:runtime": "tsc -w --preserveWatchOutput",
-    "lint": "eslint --ext=jsx,ts,tsx,js ."
+    "lint": "eslint --ext=jsx,ts,tsx,js .",
+    "test": "jest"
   },
   "dependencies": {}
 }

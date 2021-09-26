@@ -13,7 +13,7 @@ const spyRename = jest.spyOn(fsPromise, 'rename');
 const fs = new FS({});
 const baseName = 'foobar';
 const getContent = (): string => '';
-const rule: RuleInterface<'extension' | 'presence', never> = {
+const rule: RuleInterface<'extension' | 'presence', { required?: boolean }> = {
   name: 'foobar',
   docs: {
     description: '',
@@ -40,6 +40,7 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar'] as any);
 
     const check = await checkFileNameWithExtension(r, {
+      required: false,
       extension: '',
       baseName,
       getContent,
@@ -56,6 +57,7 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
+      required: false,
       extension: 'txt',
       baseName,
       getContent,
@@ -72,6 +74,7 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
+      required: false,
       extension: '',
       baseName,
       getContent,
@@ -85,12 +88,13 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should report multiple incorrect extension', async () => {
-    const r = new RuleWrapper(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error', { required: true }], fs);
     const report = jest.spyOn(r, 'report');
 
     spyList.mockResolvedValueOnce(['foobar.txt', 'foobar.json'] as any);
 
     const check = await checkFileNameWithExtension(r, {
+      required: true,
       extension: '',
       baseName,
       getContent,
@@ -100,12 +104,13 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should not find the file', async () => {
-    const r = new RuleWrapper(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error', { required: true }], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
     spyList.mockResolvedValueOnce(['bar.foo', 'barfoo.json', 'barfoo'] as any);
 
     const check = await checkFileNameWithExtension(r, {
+      required: true,
       extension: '',
       baseName,
       getContent,
@@ -117,11 +122,12 @@ describe('checkFileNameWithExtension', () => {
 
   describe('fixer', () => {
     it('should create file if missing', async () => {
-      const r = new RuleWrapper(rule, ['error'], fs);
+      const r = new RuleWrapper(rule, ['error', { required: true }], fs);
       spyList.mockResolvedValueOnce([]);
       spyWrite.mockResolvedValue();
 
       const fixer = await checkFileNameWithExtension(r, {
+        required: true,
         extension: '',
         baseName,
         getContent,
@@ -137,6 +143,7 @@ describe('checkFileNameWithExtension', () => {
       spyRename.mockResolvedValue();
 
       const fixer = await checkFileNameWithExtension(r, {
+        required: false,
         extension: '',
         baseName,
         getContent,

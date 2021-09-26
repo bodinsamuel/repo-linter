@@ -1,8 +1,8 @@
 import fsPromise from 'fs/promises';
 
 import { FS } from '../fs';
-import type { RuleInterface } from '../rule';
 import { RuleWrapper } from '../rule';
+import type { RuleInterface } from '../rule';
 
 import { checkFilePresence } from './checkFilePresence';
 
