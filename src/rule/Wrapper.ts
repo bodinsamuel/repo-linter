@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 
+import { RepoLinterError } from '../Error';
 import type { FS } from '../fs';
 
 import type {
@@ -34,8 +35,8 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     const { name, schema } = this.#rule;
     if (!schema) {
       if (this.#options && Object.keys(this.#options).length > 0) {
-        throw new Error(
-          `Passed options for rule "${name}", but no options are allowed.`
+        throw new RepoLinterError(
+          `Options have been specified for rule "${name}", but no options are allowed.`
         );
       }
       return;
@@ -44,7 +45,7 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     const validate = ajv.compile(schema);
     const isValid = validate(this.#options || {});
     if (!isValid) {
-      throw new Error(
+      throw new RepoLinterError(
         `Given options for rule "${name}" are invalid:
         - schema: ${JSON.stringify(schema)}
         - options: ${JSON.stringify(this.#options)}

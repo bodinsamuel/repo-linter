@@ -22,30 +22,30 @@ import * as tsconfigjson from './js/tsconfigjson';
 
 export const rulesets: Rulesets = {
   recommended: {
-    'base/changelog': ['error', { extension: 'md' }],
-    'base/contributing': ['error', { extension: 'md' }],
+    'base/changelog': ['error', { extension: 'md', required: true }],
+    'base/contributing': ['error', { extension: 'md', required: true }],
     'base/envexample': ['error'],
-    'base/gitignore': ['error'],
-    'base/license': ['error', { extension: '' }],
-    'base/prettierignore': ['error'],
-    'base/prettierrc': ['error', { extension: 'json' }],
-    'base/readme': ['error', { extension: 'md' }],
-    'base/releaserc': ['error', { extension: 'json' }],
-    'base/renovaterc': ['warn', { extension: 'json' }],
+    'base/gitignore': ['error', { required: true }],
+    'base/license': ['error', { extension: '', required: true }],
+    'base/prettierignore': ['error', { required: false }],
+    'base/prettierrc': ['error', { extension: 'json', required: true }],
+    'base/readme': ['error', { extension: 'md', required: true }],
+    'base/releaserc': ['error', { extension: 'json', required: true }],
+    'base/renovaterc': ['warn', { extension: 'json', required: true }],
   },
   js: {
-    'js/eslintignore': ['error'],
-    'js/eslintrc': ['error', { extension: 'json' }],
-    'js/nvmrc': ['error'],
-    'js/packagejson': ['error'],
-    'js/tsconfigjson': ['error'],
+    'js/eslintignore': ['error', { required: false }],
+    'js/eslintrc': ['error', { extension: 'json', required: true }],
+    'js/nvmrc': ['error', { required: true }],
+    'js/packagejson': ['error', { required: true }],
+    'js/tsconfigjson': ['error', { required: true }],
   },
   'js-front': {
-    'js/stylelintrc': ['error', { extension: 'json' }],
+    'js/stylelintrc': ['error', { extension: 'json', required: true }],
   },
   'js-back': {
-    'docker/dockerfile': ['error'],
-    'docker/dockerignore': ['error'],
+    'docker/dockerfile': ['error', { required: true }],
+    'docker/dockerignore': ['error', { required: true }],
   },
 };
 

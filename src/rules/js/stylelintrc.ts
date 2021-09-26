@@ -47,11 +47,7 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   async exec(rule) {
-    const extension = rule.options?.extension || '';
-
     return await checkFileNameWithExtension(rule, {
-      required: Boolean(rule.options?.required),
-      extension,
       baseName: FILENAME,
       getContent: () => CONTENT,
     });

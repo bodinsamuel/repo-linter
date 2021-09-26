@@ -1,11 +1,14 @@
 import type { ExecReturn, RuleWrapper } from '../rule';
 
 export async function checkFilePresence(
-  params: RuleWrapper<'presence', any>,
+  params: RuleWrapper<'presence', { required?: boolean }>,
   { baseName, getContent }: { baseName: string; getContent: () => string }
 ): Promise<ExecReturn> {
   const exists = await params.fs.fileExists(baseName);
   if (exists) {
+    return;
+  }
+  if (!params.options?.required) {
     return;
   }
 

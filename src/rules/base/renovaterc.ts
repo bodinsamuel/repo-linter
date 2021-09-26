@@ -2,9 +2,10 @@ import { checkFileNameWithExtension } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'extension' | 'presence';
-type Schema = { extension?: string; required?: boolean };
+type Schema = { extension?: string; required?: boolean; dotNotation?: boolean };
 
-const FILENAME = '.renovaterc';
+const FILENAME_DOT = '.renovaterc';
+const FILENAME = 'renovate';
 const CONTENT = JSON.stringify(
   {
     extends: ['config:js-app', 'algolia'],
@@ -36,6 +37,10 @@ export const def: RuleInterface<Messages, Schema> = {
         type: 'boolean',
         nullable: true,
       },
+      dotNotation: {
+        type: 'boolean',
+        nullable: true,
+      },
       extension: {
         type: 'string',
         enum: ['json', 'json5', ''],
@@ -47,11 +52,7 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   async exec(rule) {
-    const extension = rule.options?.extension || '';
-
     return await checkFileNameWithExtension(rule, {
-      required: Boolean(rule.options?.required),
-      extension,
       baseName: FILENAME,
       getContent: () => CONTENT,
     });

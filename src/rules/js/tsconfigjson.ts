@@ -2,10 +2,11 @@ import { exec } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'presence';
+type Schema = { required?: boolean };
 
 const FILENAME = 'tsconfig.json';
 
-export const def: RuleInterface<Messages> = {
+export const def: RuleInterface<Messages, Schema> = {
   name: 'js/tsconfigjson',
 
   docs: {
@@ -15,6 +16,18 @@ export const def: RuleInterface<Messages> = {
 
   messages: {
     presence: `Expected file "${FILENAME}" to exists.`,
+  },
+
+  schema: {
+    type: 'object',
+    properties: {
+      required: {
+        type: 'boolean',
+        nullable: true,
+      },
+    },
+    required: [],
+    additionalProperties: false,
   },
 
   async exec(rule) {

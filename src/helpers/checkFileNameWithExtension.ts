@@ -1,20 +1,21 @@
 import type { ExecReturn, RuleWrapper } from '../rule';
 
 export async function checkFileNameWithExtension(
-  params: RuleWrapper<'extension' | 'presence', { required?: boolean }>,
+  rule: RuleWrapper<
+    'extension' | 'presence',
+    { required?: boolean; extension?: string; [key: string]: any | undefined }
+  >,
   {
-    required,
-    extension,
     baseName,
     getContent,
   }: {
-    required: boolean;
-    extension: string;
     baseName: string;
     getContent: () => string;
   }
 ): Promise<ExecReturn> {
-  const list = await params.fs.listFiles('./');
+  const list = await rule.fs.listFiles('./');
+
+  const { extension, required } = rule.options || {};
   const fullName = `${baseName}${extension ? `.${extension}` : ''}`;
 
   let exists = false;
@@ -24,7 +25,7 @@ export async function checkFileNameWithExtension(
     }
 
     if (fullName !== file) {
-      params.report('extension', { fileName: file, extension });
+      rule.report('extension', { fileName: file, extension });
       continue;
     }
     exists = true;
@@ -34,24 +35,24 @@ export async function checkFileNameWithExtension(
     return;
   }
 
-  const reported = params.reports;
+  const reported = rule.reports;
 
   // If it does not exists but one file matched, we just change the extension
   if (reported.length === 1) {
     return async (): Promise<void> => {
-      await params.fs.fileRename(reported[0]!.data.fileName, fullName);
+      await rule.fs.fileRename(reported[0]!.data.fileName, fullName);
     };
   }
   if (!required) {
     return;
   }
 
-  params.report('presence', { fullName });
+  rule.report('presence', { fullName });
 
   if (reported.length === 1) {
     // If it matched no other file we just create it
     return async (): Promise<void> => {
-      await params.fs.fileWrite(`./${fullName}`, getContent());
+      await rule.fs.fileWrite(`./${fullName}`, getContent());
     };
   }
 }

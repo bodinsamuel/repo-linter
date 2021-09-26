@@ -13,7 +13,10 @@ const spyRename = jest.spyOn(fsPromise, 'rename');
 const fs = new FS({});
 const baseName = 'foobar';
 const getContent = (): string => '';
-const rule: RuleInterface<'extension' | 'presence', { required?: boolean }> = {
+const rule: RuleInterface<
+  'extension' | 'presence',
+  { required?: boolean; extension?: string }
+> = {
   name: 'foobar',
   docs: {
     description: '',
@@ -40,8 +43,6 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar'] as any);
 
     const check = await checkFileNameWithExtension(r, {
-      required: false,
-      extension: '',
       baseName,
       getContent,
     });
@@ -51,14 +52,12 @@ describe('checkFileNameWithExtension', () => {
   });
 
   it('should find the file with the correct extension', async () => {
-    const r = new RuleWrapper(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error', { extension: 'txt' }], fs);
     const reports = jest.spyOn(r, 'reports', 'get');
     const report = jest.spyOn(r, 'report');
     spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
-      required: false,
-      extension: 'txt',
       baseName,
       getContent,
     });
@@ -74,14 +73,12 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar.txt'] as any);
 
     const check = await checkFileNameWithExtension(r, {
-      required: false,
-      extension: '',
       baseName,
       getContent,
     });
     expect(check).toBeInstanceOf(Function);
     expect(report).toHaveBeenCalledWith('extension', {
-      extension: '',
+      extension: undefined,
       fileName: 'foobar.txt',
     });
     expect(reports).toHaveBeenCalled();
@@ -94,8 +91,6 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['foobar.txt', 'foobar.json'] as any);
 
     const check = await checkFileNameWithExtension(r, {
-      required: true,
-      extension: '',
       baseName,
       getContent,
     });
@@ -110,8 +105,6 @@ describe('checkFileNameWithExtension', () => {
     spyList.mockResolvedValueOnce(['bar.foo', 'barfoo.json', 'barfoo'] as any);
 
     const check = await checkFileNameWithExtension(r, {
-      required: true,
-      extension: '',
       baseName,
       getContent,
     });
@@ -127,8 +120,6 @@ describe('checkFileNameWithExtension', () => {
       spyWrite.mockResolvedValue();
 
       const fixer = await checkFileNameWithExtension(r, {
-        required: true,
-        extension: '',
         baseName,
         getContent,
       });
@@ -143,8 +134,6 @@ describe('checkFileNameWithExtension', () => {
       spyRename.mockResolvedValue();
 
       const fixer = await checkFileNameWithExtension(r, {
-        required: false,
-        extension: '',
         baseName,
         getContent,
       });

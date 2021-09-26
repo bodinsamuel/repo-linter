@@ -52,12 +52,12 @@ describe('license', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: '',
+      extension: undefined,
       fileName: 'LICENSE.sh',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: '', fileName: 'LICENSE.sh' },
+        data: { extension: undefined, fileName: 'LICENSE.sh' },
         message:
           'Expected file "LICENSE.sh" to have the correct extension (no extension).',
         name: 'extension',

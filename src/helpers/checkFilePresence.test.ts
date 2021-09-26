@@ -12,7 +12,7 @@ const spyWrite = jest.spyOn(fsPromise, 'writeFile');
 const fs = new FS({});
 const baseName = 'foobar';
 const getContent = (): string => '';
-const rule: RuleInterface<'presence', never> = {
+const rule: RuleInterface<'presence', { required?: boolean }> = {
   name: 'foobar',
   docs: {
     description: '',
@@ -44,7 +44,7 @@ describe('checkFilePresence', () => {
   });
 
   it('should not find the file', async () => {
-    const r = new RuleWrapper(rule, ['error'], fs);
+    const r = new RuleWrapper(rule, ['error', { required: true }], fs);
     const report = jest.spyOn(r, 'report');
     spyExists.mockRejectedValueOnce(false as any);
 
@@ -58,7 +58,7 @@ describe('checkFilePresence', () => {
 
   describe('fixer', () => {
     it('should create file if missing', async () => {
-      const r = new RuleWrapper(rule, ['error'], fs);
+      const r = new RuleWrapper(rule, ['error', { required: true }], fs);
       spyExists.mockRejectedValueOnce(false as any);
 
       const fixer = await checkFilePresence(r, {

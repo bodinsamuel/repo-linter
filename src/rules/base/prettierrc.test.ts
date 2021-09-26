@@ -52,12 +52,12 @@ describe('prettierrc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: '',
+      extension: undefined,
       fileName: '.prettierrc.sh',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: '', fileName: '.prettierrc.sh' },
+        data: { extension: undefined, fileName: '.prettierrc.sh' },
         message:
           'Expected file ".prettierrc.sh" to have the correct extension (no extension).',
         name: 'extension',

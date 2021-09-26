@@ -52,12 +52,12 @@ describe('stylelintrc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: '',
+      extension: undefined,
       fileName: '.stylelintrc.sh',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: '', fileName: '.stylelintrc.sh' },
+        data: { extension: undefined, fileName: '.stylelintrc.sh' },
         message:
           'Expected file ".stylelintrc.sh" to have the correct extension (no extension).',
         name: 'extension',

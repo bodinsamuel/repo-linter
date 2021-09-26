@@ -2,10 +2,11 @@ import { checkFilePresence } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'presence';
+type Schema = { required?: boolean };
 
 const FILENAME = '.env.example';
 
-export const def: RuleInterface<Messages> = {
+export const def: RuleInterface<Messages, Schema> = {
   name: 'base/envexample',
 
   docs: {
@@ -15,6 +16,18 @@ export const def: RuleInterface<Messages> = {
 
   messages: {
     presence: `Expected file "${FILENAME}" to exists.`,
+  },
+
+  schema: {
+    type: 'object',
+    properties: {
+      required: {
+        type: 'boolean',
+        nullable: true,
+      },
+    },
+    required: [],
+    additionalProperties: false,
   },
 
   async exec(rule) {
