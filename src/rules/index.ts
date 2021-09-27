@@ -12,7 +12,8 @@ import * as releaserc from './base/releaserc';
 import * as renovaterc from './base/renovaterc';
 import * as dockerfile from './docker/dockerfile';
 import * as dockerignore from './docker/dockerignore';
-import * as actions from './github/actions';
+import * as ghactions from './github/actions';
+import * as bundlesizeconfigjson from './js/bundlesizeconfigjson';
 import * as cypressjson from './js/cypressjson';
 import * as eslintignore from './js/eslintignore';
 import * as eslintrc from './js/eslintrc';
@@ -23,33 +24,28 @@ import * as tsconfigjson from './js/tsconfigjson';
 
 export const rulesets: Rulesets = {
   recommended: {
-    'base/changelog': ['error', { extension: 'md', required: true }],
-    'base/contributing': ['error', { extension: 'md', required: true }],
+    'base/changelog': ['error', { required: true }],
+    'base/contributing': ['error', { required: true }],
     'base/envexample': ['error'],
     'base/gitignore': ['error', { required: true }],
-    'base/license': ['error', { extension: '', required: true }],
+    'base/license': ['error', { required: true }],
     'base/prettierignore': ['error', { required: false }],
-    'base/prettierrc': [
-      'error',
-      { extension: 'json', required: true, dotNotation: true },
-    ],
-    'base/readme': ['error', { extension: 'md', required: true }],
-    'base/releaserc': ['error', { extension: 'json', required: true }],
-    'base/renovaterc': [
-      'warn',
-      { extension: 'json', required: true, dotNotation: true },
-    ],
+    'base/prettierrc': ['error', { required: true }],
+    'base/readme': ['error', { required: true }],
+    'base/releaserc': ['error', { required: true }],
+    'base/renovaterc': ['warn', { required: true }],
   },
   js: {
     'js/eslintignore': ['error', { required: false }],
-    'js/eslintrc': ['error', { extension: 'json', required: true }],
+    'js/eslintrc': ['error', { required: true }],
     'js/nvmrc': ['error', { required: true }],
     'js/packagejson': ['error', { required: true }],
     'js/tsconfigjson': ['error', { required: true }],
   },
   'js-front': {
-    'js/stylelintrc': ['error', { extension: 'json', required: true }],
+    'js/bundlesizeconfigjson': ['error', { required: true }],
     'js/cypressjson': ['error', { required: false }],
+    'js/stylelintrc': ['error', { required: true }],
   },
   'js-back': {
     'docker/dockerfile': ['error', { required: true }],
@@ -58,24 +54,25 @@ export const rulesets: Rulesets = {
 };
 
 export const rules = {
+  bundlesizeconfigjson,
   changelog,
   contributing,
   cypressjson,
+  dockerfile,
+  dockerignore,
   envexample,
+  eslintignore,
+  eslintrc,
+  ghactions,
   gitignore,
   license,
+  nvmrc,
+  packagejson,
   prettierignore,
   prettierrc,
   readme,
   releaserc,
   renovaterc,
-  dockerfile,
-  dockerignore,
-  actions,
-  eslintignore,
-  eslintrc,
-  nvmrc,
-  packagejson,
   stylelintrc,
   tsconfigjson,
 };

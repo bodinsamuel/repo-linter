@@ -4,10 +4,10 @@ import type { RuleInterface } from '../../rule';
 type Messages = 'presence';
 type Schema = { required?: boolean };
 
-const FILENAME = 'cypress.json';
+const FILENAME = 'bundlesize.config.json';
 
 export const def: RuleInterface<Messages, Schema> = {
-  name: 'js/cypressjson',
+  name: 'js/bundlesizeconfigjson',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,
