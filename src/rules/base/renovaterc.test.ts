@@ -15,7 +15,7 @@ describe('renovaterc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.renovaterc'] as any);
+    spy.mockResolvedValueOnce(['.renovaterc.json'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('renovaterc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: '.renovaterc',
+      fileName: '.renovaterc.json',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: '.renovaterc' },
-        message: 'Expected file ".renovaterc" to exists.',
+        data: { fileName: '.renovaterc.json' },
+        message: 'Expected file ".renovaterc.json" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,20 +47,20 @@ describe('renovaterc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.renovaterc.sh' as any]);
+    spy.mockResolvedValueOnce(['.renovaterc' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
-    expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: undefined,
-      fileName: '.renovaterc.sh',
+    expect(r.report).toHaveBeenCalledWith('preferred', {
+      preferred: '.renovaterc.json',
+      fileName: '.renovaterc',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: undefined, fileName: '.renovaterc.sh' },
+        data: { preferred: '.renovaterc.json', fileName: '.renovaterc' },
         message:
-          'Expected file ".renovaterc.sh" to have the correct extension (no extension).',
-        name: 'extension',
+          'Expected file ".renovaterc.json" to exists but found ".renovaterc".',
+        name: 'preferred',
       },
     ]);
   });

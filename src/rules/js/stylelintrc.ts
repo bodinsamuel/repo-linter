@@ -1,10 +1,19 @@
-import { checkFileNameWithExtension } from '../../helpers';
+import { checkFileName } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
-type Messages = 'extension' | 'presence';
-type Schema = { extension?: string; required?: boolean };
+type Messages = 'preferred' | 'presence';
+type Schema = { preferred?: string; required?: boolean };
 
-const FILENAME = '.stylelintrc';
+const FILENAME = '.stylelintrc.json';
+const NAMES = [
+  '.stylelintrc',
+  '.stylelintrc.json',
+  '.stylelintrc.yaml',
+  '.stylelintrc.yml',
+  '.stylelintrc.js',
+  'stylelint.config.js',
+  'stylelint.config.cjs',
+];
 const CONTENT = JSON.stringify(
   {
     extends: ['stylelint-config-recommended', 'stylelint-config-standard'],
@@ -22,11 +31,10 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   messages: {
-    presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
-    extension: ({ fileName, extension }) =>
-      `Expected file "${fileName}" to have the correct extension (${
-        extension ? extension : 'no extension'
-      }).`,
+    presence: ({ fileName }) => `Expected file "${fileName}" to exists.`,
+    preferred: ({ fileName, preferred }) => {
+      return `Expected file "${preferred}" to exists but found "${fileName}".`;
+    },
   },
 
   schema: {
@@ -36,9 +44,10 @@ export const def: RuleInterface<Messages, Schema> = {
         type: 'boolean',
         nullable: true,
       },
-      extension: {
+
+      preferred: {
         type: 'string',
-        enum: ['json', 'yaml', 'yml', 'js', 'cjs', ''],
+        enum: NAMES,
         nullable: true,
       },
     },
@@ -47,8 +56,9 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   async exec(rule) {
-    return await checkFileNameWithExtension(rule, {
-      baseName: FILENAME,
+    return await checkFileName(rule, {
+      names: NAMES,
+      defaultName: FILENAME,
       getContent: () => CONTENT,
     });
   },

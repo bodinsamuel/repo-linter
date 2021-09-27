@@ -15,7 +15,7 @@ describe('contributing', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CONTRIBUTING'] as any);
+    spy.mockResolvedValueOnce(['CONTRIBUTING.md'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('contributing', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: 'CONTRIBUTING',
+      fileName: 'CONTRIBUTING.md',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: 'CONTRIBUTING' },
-        message: 'Expected file "CONTRIBUTING" to exists.',
+        data: { fileName: 'CONTRIBUTING.md' },
+        message: 'Expected file "CONTRIBUTING.md" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,20 +47,20 @@ describe('contributing', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['CONTRIBUTING.sh' as any]);
+    spy.mockResolvedValueOnce(['CONTRIBUTING' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
-    expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: undefined,
-      fileName: 'CONTRIBUTING.sh',
+    expect(r.report).toHaveBeenCalledWith('preferred', {
+      preferred: 'CONTRIBUTING.md',
+      fileName: 'CONTRIBUTING',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: undefined, fileName: 'CONTRIBUTING.sh' },
+        data: { preferred: 'CONTRIBUTING.md', fileName: 'CONTRIBUTING' },
         message:
-          'Expected file "CONTRIBUTING.sh" to have the correct extension (no extension).',
-        name: 'extension',
+          'Expected file "CONTRIBUTING.md" to exists but found "CONTRIBUTING".',
+        name: 'preferred',
       },
     ]);
   });

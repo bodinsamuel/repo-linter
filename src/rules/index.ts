@@ -28,10 +28,16 @@ export const rulesets: Rulesets = {
     'base/gitignore': ['error', { required: true }],
     'base/license': ['error', { extension: '', required: true }],
     'base/prettierignore': ['error', { required: false }],
-    'base/prettierrc': ['error', { extension: 'json', required: true }],
+    'base/prettierrc': [
+      'error',
+      { extension: 'json', required: true, dotNotation: true },
+    ],
     'base/readme': ['error', { extension: 'md', required: true }],
     'base/releaserc': ['error', { extension: 'json', required: true }],
-    'base/renovaterc': ['warn', { extension: 'json', required: true }],
+    'base/renovaterc': [
+      'warn',
+      { extension: 'json', required: true, dotNotation: true },
+    ],
   },
   js: {
     'js/eslintignore': ['error', { required: false }],

@@ -15,7 +15,7 @@ describe('releaserc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.releaserc'] as any);
+    spy.mockResolvedValueOnce(['.releaserc.json'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('releaserc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: '.releaserc',
+      fileName: '.releaserc.json',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: '.releaserc' },
-        message: 'Expected file ".releaserc" to exists.',
+        data: { fileName: '.releaserc.json' },
+        message: 'Expected file ".releaserc.json" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,20 +47,20 @@ describe('releaserc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.releaserc.sh' as any]);
+    spy.mockResolvedValueOnce(['.releaserc.yaml' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
-    expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: undefined,
-      fileName: '.releaserc.sh',
+    expect(r.report).toHaveBeenCalledWith('preferred', {
+      preferred: '.releaserc.json',
+      fileName: '.releaserc.yaml',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: undefined, fileName: '.releaserc.sh' },
+        data: { preferred: '.releaserc.json', fileName: '.releaserc.yaml' },
         message:
-          'Expected file ".releaserc.sh" to have the correct extension (no extension).',
-        name: 'extension',
+          'Expected file ".releaserc.json" to exists but found ".releaserc.yaml".',
+        name: 'preferred',
       },
     ]);
   });

@@ -15,7 +15,7 @@ describe('prettierrc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.prettierrc'] as any);
+    spy.mockResolvedValueOnce(['.prettierrc.json'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('prettierrc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: '.prettierrc',
+      fileName: '.prettierrc.json',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: '.prettierrc' },
-        message: 'Expected file ".prettierrc" to exists.',
+        data: { fileName: '.prettierrc.json' },
+        message: 'Expected file ".prettierrc.json" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,20 +47,20 @@ describe('prettierrc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.prettierrc.sh' as any]);
+    spy.mockResolvedValueOnce(['.prettierrc.yaml' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
-    expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: undefined,
-      fileName: '.prettierrc.sh',
+    expect(r.report).toHaveBeenCalledWith('preferred', {
+      preferred: '.prettierrc.json',
+      fileName: '.prettierrc.yaml',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: undefined, fileName: '.prettierrc.sh' },
+        data: { preferred: '.prettierrc.json', fileName: '.prettierrc.yaml' },
         message:
-          'Expected file ".prettierrc.sh" to have the correct extension (no extension).',
-        name: 'extension',
+          'Expected file ".prettierrc.json" to exists but found ".prettierrc.yaml".',
+        name: 'preferred',
       },
     ]);
   });

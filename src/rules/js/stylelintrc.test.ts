@@ -15,7 +15,7 @@ describe('stylelintrc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.stylelintrc'] as any);
+    spy.mockResolvedValueOnce(['.stylelintrc.json'] as any);
 
     const check = await rule.exec(r);
     expect(check).toBeUndefined();
@@ -32,12 +32,12 @@ describe('stylelintrc', () => {
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
     expect(r.report).toHaveBeenCalledWith('presence', {
-      fullName: '.stylelintrc',
+      fileName: '.stylelintrc.json',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { fullName: '.stylelintrc' },
-        message: 'Expected file ".stylelintrc" to exists.',
+        data: { fileName: '.stylelintrc.json' },
+        message: 'Expected file ".stylelintrc.json" to exists.',
         name: 'presence',
       },
     ]);
@@ -47,20 +47,20 @@ describe('stylelintrc', () => {
     const r = new RuleWrapper(rule, ['error'], fs);
 
     jest.spyOn(r, 'report');
-    spy.mockResolvedValueOnce(['.stylelintrc.sh' as any]);
+    spy.mockResolvedValueOnce(['.stylelintrc' as any]);
 
     const check = await rule.exec(r);
     expect(check).toBeInstanceOf(Function);
-    expect(r.report).toHaveBeenCalledWith('extension', {
-      extension: undefined,
-      fileName: '.stylelintrc.sh',
+    expect(r.report).toHaveBeenCalledWith('preferred', {
+      preferred: '.stylelintrc.json',
+      fileName: '.stylelintrc',
     });
     expect(r.reports).toStrictEqual([
       {
-        data: { extension: undefined, fileName: '.stylelintrc.sh' },
+        data: { preferred: '.stylelintrc.json', fileName: '.stylelintrc' },
         message:
-          'Expected file ".stylelintrc.sh" to have the correct extension (no extension).',
-        name: 'extension',
+          'Expected file ".stylelintrc.json" to exists but found ".stylelintrc".',
+        name: 'preferred',
       },
     ]);
   });

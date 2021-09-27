@@ -1,10 +1,18 @@
-import { checkFileNameWithExtension } from '../../helpers';
+import { checkFileName } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
-type Messages = 'extension' | 'presence';
-type Schema = { extension?: string; required?: boolean };
+type Messages = 'preferred' | 'presence';
+type Schema = { preferred?: string; required?: boolean };
 
-const FILENAME = '.releaserc';
+const FILENAME = '.releaserc.json';
+const NAMES = [
+  '.releaserc',
+  '.releaserc.json',
+  '.releaserc.yaml',
+  '.releaserc.yml',
+  '.releaserc.js',
+  'release.config.js',
+];
 const CONTENT = JSON.stringify(
   {
     branches: 'master',
@@ -41,11 +49,10 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   messages: {
-    presence: ({ fullName }) => `Expected file "${fullName}" to exists.`,
-    extension: ({ fileName, extension }) =>
-      `Expected file "${fileName}" to have the correct extension (${
-        extension ? extension : 'no extension'
-      }).`,
+    presence: ({ fileName }) => `Expected file "${fileName}" to exists.`,
+    preferred: ({ fileName, preferred }) => {
+      return `Expected file "${preferred}" to exists but found "${fileName}".`;
+    },
   },
 
   schema: {
@@ -55,9 +62,9 @@ export const def: RuleInterface<Messages, Schema> = {
         type: 'boolean',
         nullable: true,
       },
-      extension: {
+      preferred: {
         type: 'string',
-        enum: ['json', 'js', 'yaml', 'yml', ''],
+        enum: NAMES,
         nullable: true,
       },
     },
@@ -66,8 +73,9 @@ export const def: RuleInterface<Messages, Schema> = {
   },
 
   async exec(rule) {
-    return await checkFileNameWithExtension(rule, {
-      baseName: FILENAME,
+    return await checkFileName(rule, {
+      names: NAMES,
+      defaultName: FILENAME,
       getContent: () => CONTENT,
     });
   },
