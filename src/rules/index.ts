@@ -13,6 +13,7 @@ import * as renovaterc from './base/renovaterc';
 import * as dockerfile from './docker/dockerfile';
 import * as dockerignore from './docker/dockerignore';
 import * as actions from './github/actions';
+import * as cypressjson from './js/cypressjson';
 import * as eslintignore from './js/eslintignore';
 import * as eslintrc from './js/eslintrc';
 import * as nvmrc from './js/nvmrc';
@@ -48,6 +49,7 @@ export const rulesets: Rulesets = {
   },
   'js-front': {
     'js/stylelintrc': ['error', { extension: 'json', required: true }],
+    'js/cypressjson': ['error', { required: false }],
   },
   'js-back': {
     'docker/dockerfile': ['error', { required: true }],
@@ -58,6 +60,7 @@ export const rulesets: Rulesets = {
 export const rules = {
   changelog,
   contributing,
+  cypressjson,
   envexample,
   gitignore,
   license,
