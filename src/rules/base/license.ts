@@ -6,7 +6,7 @@ import type { RuleInterface } from '../../rule';
 type Messages = 'preferred' | 'presence';
 type Schema = { preferred?: string; required?: boolean };
 
-const FILENAME = 'LICENSE.md';
+const FILENAME = 'LICENSE';
 const NAMES = ['LICENSE.md', 'LICENSE'];
 const CONTENT = `MIT License
 
