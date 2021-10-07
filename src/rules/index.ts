@@ -10,8 +10,12 @@ import * as prettierrc from './base/prettierrc';
 import * as readme from './base/readme';
 import * as releaserc from './base/releaserc';
 import * as renovaterc from './base/renovaterc';
+import * as circleci from './ci/circleci';
+import * as codesandboxci from './ci/codesandbox';
+import * as travisci from './ci/travisci';
 import * as dockerfile from './docker/dockerfile';
 import * as dockerignore from './docker/dockerignore';
+import * as defaultbranch from './git/defaultbranch';
 import * as ghactions from './github/actions';
 import * as bundlesizeconfigjson from './js/bundlesizeconfigjson';
 import * as cypressjson from './js/cypressjson';
@@ -34,7 +38,9 @@ export const rulesets: Rulesets = {
     'base/readme': ['error', { required: true }],
     'base/releaserc': ['error', { required: true }],
     'base/renovaterc': ['warn', { required: true }],
+    'git/defaultbranch': ['warn', { name: 'main' }],
   },
+  ci: {},
   js: {
     'js/eslintignore': ['error', { required: false }],
     'js/eslintrc': ['error', { required: true }],
@@ -56,8 +62,11 @@ export const rulesets: Rulesets = {
 export const rules = {
   bundlesizeconfigjson,
   changelog,
+  circleci,
+  codesandboxci,
   contributing,
   cypressjson,
+  defaultbranch,
   dockerfile,
   dockerignore,
   envexample,
@@ -74,5 +83,6 @@ export const rules = {
   releaserc,
   renovaterc,
   stylelintrc,
+  travisci,
   tsconfigjson,
 };

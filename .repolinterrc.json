@@ -2,7 +2,8 @@
   "plugins": [],
   "extends": [
     "base/recommended",
-    "base/js"
+    "base/js",
+    "base/ci"
   ],
   "rules": {}
 }
