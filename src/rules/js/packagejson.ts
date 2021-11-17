@@ -1,4 +1,3 @@
-import { exec } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'presence';
@@ -38,7 +37,12 @@ export const def: RuleInterface<Messages, Schema> = {
 
     rule.report('presence');
     return async (): Promise<void> => {
-      await exec('yarn init --yp');
+      await rule.exec(
+        'yarn set version berry && yarn init -p -w && yarn config set nodeLinker "node-modules" && yarn install',
+        {
+          shell: true,
+        }
+      );
     };
   },
 };

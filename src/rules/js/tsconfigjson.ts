@@ -1,4 +1,3 @@
-import { exec } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'presence';
@@ -38,7 +37,9 @@ export const def: RuleInterface<Messages, Schema> = {
 
     rule.report('presence');
     return async (): Promise<void> => {
-      await exec('yarn tsc --init');
+      await rule.exec('yarn add -DE typescript && yarn tsc --init', {
+        shell: true,
+      });
     };
   },
 };

@@ -1,4 +1,6 @@
 import Ajv from 'ajv';
+import type { ExecaChildProcess } from 'execa';
+import execa from 'execa';
 
 import { RepoLinterError } from '../Error';
 import type { FS } from '../fs';
@@ -62,7 +64,14 @@ export class RuleWrapper<TMessage extends string, TSchema = never> {
     this.#reported.push({ name, message, data });
   }
 
-  async exec(fix: boolean): Promise<ExecReturn | Promise<ExecReturn>> {
+  exec(command: string, options?: execa.Options): ExecaChildProcess<string> {
+    return execa.command(command, {
+      cwd: this.#fs.base,
+      ...options,
+    });
+  }
+
+  async run(fix: boolean): Promise<ExecReturn | Promise<ExecReturn>> {
     const fixer = await this.#rule.exec(this as any); // I don't get it
 
     if (fix && fixer) {

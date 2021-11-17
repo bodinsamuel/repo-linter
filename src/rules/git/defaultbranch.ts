@@ -1,4 +1,3 @@
-import { exec } from '../../helpers';
 import type { RuleInterface } from '../../rule';
 
 type Messages = 'presence';
@@ -31,7 +30,7 @@ export const def: RuleInterface<Messages, Schema> = {
 
   async exec(rule) {
     const expected = rule.options?.name || 'master';
-    const current = await exec(
+    const current = await rule.exec(
       'git symbolic-ref refs/remotes/origin/HEAD | sed s@^refs/remotes/origin/@@',
       { shell: true }
     );

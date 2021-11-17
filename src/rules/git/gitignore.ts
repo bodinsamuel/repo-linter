@@ -28,7 +28,7 @@ junit/
 `;
 
 export const def: RuleInterface<Messages, Schema> = {
-  name: 'base/gitignore',
+  name: 'git/gitignore',
 
   docs: {
     description: `enforce the presence of a "${FILENAME}" file at root level`,

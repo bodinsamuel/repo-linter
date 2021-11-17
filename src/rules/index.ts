@@ -3,7 +3,6 @@ import type { Rulesets } from '../types';
 import * as changelog from './base/changelog';
 import * as contributing from './base/contributing';
 import * as envexample from './base/envexample';
-import * as gitignore from './base/gitignore';
 import * as license from './base/license';
 import * as prettierignore from './base/prettierignore';
 import * as prettierrc from './base/prettierrc';
@@ -16,6 +15,7 @@ import * as travisci from './ci/travisci';
 import * as dockerfile from './docker/dockerfile';
 import * as dockerignore from './docker/dockerignore';
 import * as defaultbranch from './git/defaultbranch';
+import * as gitignore from './git/gitignore';
 import * as ghactions from './github/actions';
 import * as bundlesizeconfigjson from './js/bundlesizeconfigjson';
 import * as cypressjson from './js/cypressjson';
@@ -31,13 +31,13 @@ export const rulesets: Rulesets = {
     'base/changelog': ['error', { required: true }],
     'base/contributing': ['error', { required: true }],
     'base/envexample': ['error'],
-    'base/gitignore': ['error', { required: true }],
     'base/license': ['error', { required: true }],
     'base/prettierignore': ['error', { required: false }],
     'base/prettierrc': ['error', { required: true }],
     'base/readme': ['error', { required: true }],
     'base/releaserc': ['error', { required: true }],
     'base/renovaterc': ['warn', { required: true }],
+    'git/gitignore': ['error', { required: true }],
     'git/defaultbranch': ['warn', { name: 'main' }],
   },
   ci: {},

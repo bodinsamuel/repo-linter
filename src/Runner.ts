@@ -31,7 +31,7 @@ export class Runner {
     fix: boolean;
   }) {
     this.#fs = opts.fs;
-    this.#rcPath = opts.rcPath;
+    this.#rcPath = this.#fs.toAbsolute(opts.rcPath);
     this.#folder = this.#fs.base;
     this.#reporter = opts.reporter;
     this.#fix = opts.fix;
@@ -120,7 +120,7 @@ export class Runner {
       const def = this.#registry.get(name)!;
       const rule = new RuleWrapper(def, options, this.#fs);
       rule.validate();
-      await rule.exec(this.#fix);
+      await rule.run(this.#fix);
 
       this.#reporter.add(rule);
     }
