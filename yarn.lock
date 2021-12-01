@@ -2008,14 +2008,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-algolia@npm:19.0.2":
-  version: 19.0.2
-  resolution: "eslint-config-algolia@npm:19.0.2"
+"eslint-config-algolia@npm:20.0.0":
+  version: 20.0.0
+  resolution: "eslint-config-algolia@npm:20.0.0"
   peerDependencies:
-    babel-eslint: ^10.1.0
-    eslint: ^5.16.0 || ^6.8.0 || ^7.2.0
+    eslint: ^5.16.0 || ^6.8.0 || ^7.2.0 || ^8.0.0
     prettier: ^2.2.1
-  checksum: 1bfbfb592164b021994ebef0026696515cf263ca582ea448848c7a6d2bf25695e09d62b29a45e58fb992796252bff7aeaa6b88c3909d13c37222a35a207300ef
+  checksum: d50b249f65c535c7f34dfd773d36b7057b2cfbd6406631af67550ac22e6d00018be38a499e11c8dbb8f163911098a4b0ab20a7933393eaaa17968b308dd726ef
   languageName: node
   linkType: hard
 
@@ -4623,7 +4622,7 @@ __metadata:
     ajv: 8.6.3
     chalk: 4.1.2
     eslint: 7.32.0
-    eslint-config-algolia: 19.0.2
+    eslint-config-algolia: 20.0.0
     eslint-config-prettier: 8.3.0
     eslint-plugin-eslint-comments: 3.2.0
     eslint-plugin-import: 2.24.2
